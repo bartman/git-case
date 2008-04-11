@@ -8,14 +8,26 @@ source git-case-common
 DESCRIPTION=$@
 test -z "$DESCRIPTION" && die "$0 <description>"
 
-NAME=$(date +%Y%m%d-%H%M%S.%N:)$(echo -n "$DESCRIPTION" | tr -c "a-zA-Z0-9" -)
+CASE_NAME=$(date +%Y%m%d-%H%M%S.%N:)$(echo -n "$DESCRIPTION" | tr -c "a-zA-Z0-9" -)
 
+# we work in the working dir
+test -d "$GIT_CASE_WORK_DIR" && die "stale $GIT_CASE_WORK_DIR already exists"
+mkdir -p "$GIT_CASE_WORK_DIR"
+cd "$GIT_CASE_WORK_DIR"
+
+# build the tree
 mkdir -p "$NAME"
-echo "$DESCRIPTION" > "$NAME/description"
+echo "$DESCRIPTION"                           > "$NAME/description"
+git rev-parse HEAD                            > "$NAME/found"
+echo new                                      > "$NAME/state"
+echo v0.0                                     > "$NAME/version"
 
 git read-tree --reset "$GIT_CASE_HEAD"
 
 git update-index --add "$NAME/description"
+git update-index --add "$NAME/found"
+git update-index --add "$NAME/state"
+git update-index --add "$NAME/version"
 
 TREE=$(git write-tree)
 test -z "$TREE" && die "failed to write tree"
