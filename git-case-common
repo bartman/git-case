@@ -6,8 +6,8 @@ set -e
 # find the .git dir
 
 GIT_DIR=$(git rev-parse --git-dir)
-if test "${REPO_TOP:0:1}" != / ; then
-        REPO_TOP="$(pwd)/$REPO_TOP"
+if test "${GIT_DIR:0:1}" != / ; then
+        GIT_DIR="$(pwd)/$GIT_DIR"
 fi
 export GIT_DIR
 
