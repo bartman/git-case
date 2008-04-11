@@ -1,0 +1,23 @@
+# common file for git-case
+
+set -e
+
+# -------
+
+export GIT_CASE_HEAD="cases"
+export GIT_CASE_DIR=".git/case"
+
+export GIT_CASE_INDEX="$GIT_CASE_DIR/index"
+
+# ---------
+
+mkdir -p $(dirname "$GIT_CASE_INDEX")
+export GIT_INDEX_FILE="$GIT_CASE_INDEX"
+
+# ---------
+
+function die() {
+        echo $@ >&2
+        exit 1
+}
+

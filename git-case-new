@@ -1,0 +1,27 @@
+#!/bin/bash
+#
+# Assumptions:
+#  - we are tracking cases on the 'cases' branch which already exists
+
+source git-case-common
+
+DESCRIPTION=$@
+test -z "$DESCRIPTION" && die "$0 <description>"
+
+NAME=$(date +%Y%m%d-%H%M%S.%N:)$(echo -n "$DESCRIPTION" | tr -c "a-zA-Z0-9" -)
+
+mkdir -p "$NAME"
+echo "$DESCRIPTION" > "$NAME/description"
+
+git read-tree --reset "$GIT_CASE_HEAD"
+
+git update-index --add "$NAME/description"
+
+TREE=$(git write-tree)
+test -z "$TREE" && die "failed to write tree"
+
+COMMIT=$(echo "$DESCRIPTION" | git commit-tree ${TREE} -p cases)
+test -z "$COMMIT" && die "failed to create commit"
+
+echo "$COMMIT" > ".git/refs/heads/$GIT_CASE_HEAD"
+
