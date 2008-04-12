@@ -1,0 +1,19 @@
+#!/bin/bash
+#
+# Assumptions:
+#  - in a git repository
+#  - we can access git-case-common
+#  - the branch defined by GIT_CASE_HEAD exists (see git-case-common)
+
+source git-case-common
+
+ID=$1
+test -z "$ID" && die "$0 <case-id>"
+
+CNT=$(git ls-tree cases | awk " /\<${ID}[a-zA-Z0-9.-]*$/"'{ print $4 }' | wc -l)
+test "$CNT" -gt 1 && die "ID is ambiguous, select a full ID"
+test "$CNT" -lt 1 && die "ID does not match a case"
+
+FULL_ID=$(git ls-tree cases | awk " /\<${ID}[a-zA-Z0-9-]*$/"'{ print $4 }')
+
+echo "$FULL_ID" > "${GIT_CASE_ACTIVE}"

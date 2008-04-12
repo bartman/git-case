@@ -2,7 +2,7 @@
 #
 # Assumptions:
 #  - in a git repository
-#  - the branch defined by GIT_CASE_HEAD exists (see git-case-common)
+#  - we can access git-case-common
 
 source git-case-common
 
