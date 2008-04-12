@@ -9,7 +9,7 @@ source git-case-common
 DESCRIPTION=$@
 test -z "$DESCRIPTION" && die "$0 <description>"
 
-CASE_NAME=$(date +%Y%m%d-%H%M%S.%N:)$(echo -n "$DESCRIPTION" | tr -c "a-zA-Z0-9" -)
+CASE_NAME=$(date +%Y%m%d-%H%M%S.%N-)$(echo -n "$DESCRIPTION" | tr -c "a-zA-Z0-9" -)
 
 # we work in the working dir
 test -d "$GIT_CASE_WORK_DIR" && die "stale $GIT_CASE_WORK_DIR already exists"
