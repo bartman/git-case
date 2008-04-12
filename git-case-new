@@ -1,7 +1,8 @@
 #!/bin/bash
 #
 # Assumptions:
-#  - we are tracking cases on the 'cases' branch which already exists
+#  - in a git repository
+#  - the branch defined by GIT_CASE_HEAD exists (see git-case-common)
 
 source git-case-common
 
@@ -22,7 +23,7 @@ git rev-parse HEAD                            > "$CASE_NAME/found"
 echo new                                      > "$CASE_NAME/state"
 echo v0.0                                     > "$CASE_NAME/version"
 
-git read-tree --reset "$GIT_CASE_HEAD"
+git read-tree -i --reset "$GIT_CASE_HEAD"
 
 git update-index --add "$CASE_NAME/description"
 git update-index --add "$CASE_NAME/found"

@@ -25,7 +25,6 @@ export GIT_CASE_INDEX="$GIT_CASE_DIR/index"
 # prepare the redirection
 
 export GIT_INDEX_FILE="$GIT_CASE_INDEX"
-export GIT_DIR=$(git rev-parse --git-dir)
 
 # ------------------------------------------------------------------------
 
