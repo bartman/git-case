@@ -13,6 +13,7 @@ CASE_NAME=$(date +%Y%m%d-%H%M%S.%N:)$(echo -n "$DESCRIPTION" | tr -c "a-zA-Z0-9"
 
 # we work in the working dir
 test -d "$GIT_CASE_WORK_DIR" && die "stale $GIT_CASE_WORK_DIR already exists"
+trap "cd $GIT_DIR ; rm -rf $GIT_CASE_WORK_DIR; exit" INT TERM EXIT
 mkdir -p "$GIT_CASE_WORK_DIR"
 cd "$GIT_CASE_WORK_DIR"
 
@@ -26,7 +27,7 @@ echo v0.0                                     > "$CASE_NAME/version"
 COMMIT_PARENT_ARGS=
 if test -n "$(git-rev-parse --revs-only ${GIT_CASE_HEAD})" ; then
         # already initialized, reset index to last commit
-        git read-tree -f -i --reset "$GIT_CASE_HEAD"
+        git read-tree -i --reset "$GIT_CASE_HEAD"
         COMMIT_PARENT_ARGS="-p $GIT_CASE_HEAD"
 else
         # reset the cache
