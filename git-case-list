@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+# Assumptions:
+#  - in a git repository
+#  - the branch defined by GIT_CASE_HEAD exists (see git-case-common)
+
+source git-case-common
+
+git ls-tree cases -- . | while read mode type object file ; do
+        if test $type = tree ; then
+                short=$(echo $file | cut -d- -f -2)
+                desc=$(git show cases:$file/description)
+                state="["$(git show cases:$file/state)"]"
+                printf "%-26s   %5s   %s\n" "$short" "$state" "$desc"
+        fi
+done
