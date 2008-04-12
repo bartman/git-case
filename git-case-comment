@@ -1,0 +1,27 @@
+#!/bin/bash
+#
+# Assumptions:
+#  - in a git repository
+#  - we can access git-case-common
+#  - the branch defined by GIT_CASE_HEAD exists (see git-case-common)
+
+source git-case-common
+
+COMMENT="$@"
+test -z "$COMMENT" && die "$0 <text>"
+
+ID=$(cat "$GIT_CASE_ACTIVE" 2>/dev/null || true)
+test -z "$ID" && die "no active case set"
+
+COMMENT_NAME=$(date +%Y%m%d-%H%M%S.%N)
+
+# we work in the working dir
+go_to_git_case_work_dir
+
+git checkout cases -- ${ID}
+mkdir -p "$ID/comments"
+echo "$COMMENT" > "$ID/comments/$COMMENT_NAME"
+
+git update-index --add "$ID/comments/$COMMENT_NAME"
+
+commit_index_and_update_branch "comment on $ID" "-p $GIT_CASE_HEAD"

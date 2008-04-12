@@ -12,10 +12,7 @@ test -z "$DESCRIPTION" && die "$0 <description>"
 CASE_NAME=$(date +%Y%m%d-%H%M%S.%N-)$(echo -n "$DESCRIPTION" | tr -c "a-zA-Z0-9" -)
 
 # we work in the working dir
-test -d "$GIT_CASE_WORK_DIR" && die "stale $GIT_CASE_WORK_DIR already exists"
-trap "cd $GIT_DIR ; rm -rf $GIT_CASE_WORK_DIR; exit" INT TERM EXIT
-mkdir -p "$GIT_CASE_WORK_DIR"
-cd "$GIT_CASE_WORK_DIR"
+go_to_git_case_work_dir
 
 # build the tree
 mkdir -p "$CASE_NAME"
@@ -39,11 +36,5 @@ git update-index --add "$CASE_NAME/found"
 git update-index --add "$CASE_NAME/state"
 git update-index --add "$CASE_NAME/version"
 
-TREE=$(git write-tree)
-test -z "$TREE" && die "failed to write tree"
-
-COMMIT=$(echo "$DESCRIPTION" | git commit-tree ${TREE} ${COMMIT_PARENT_ARGS})
-test -z "$COMMIT" && die "failed to create commit"
-
-echo "$COMMIT" > "${GIT_DIR}/refs/heads/$GIT_CASE_HEAD"
+commit_index_and_update_branch "$DESCRIPTION" "$COMMIT_PARENT_ARGS"
 

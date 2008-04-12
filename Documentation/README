@@ -37,5 +37,10 @@ What works...
 
     $ ./git-case-active 20080411-212534.972171044
 
+  * commenting
+
+    (this is kinda broken, it will break the index)
+
+    $ ./git-case-comment some text goes here
 
 

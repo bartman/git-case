@@ -29,6 +29,26 @@ export GIT_INDEX_FILE="$GIT_CASE_INDEX"
 
 # ------------------------------------------------------------------------
 
+function go_to_git_case_work_dir() {
+        test -d "$GIT_CASE_WORK_DIR" && die "stale $GIT_CASE_WORK_DIR already exists"
+        trap "cd $GIT_DIR ; rm -rf $GIT_CASE_WORK_DIR; exit" INT TERM EXIT
+        mkdir -p "$GIT_CASE_WORK_DIR"
+        cd "$GIT_CASE_WORK_DIR"
+}
+
+function commit_index_and_update_branch() {
+        DESCRIPTION=$1
+        COMMIT_PARENT_ARGS=$2
+
+        TREE=$(git write-tree)
+        test -z "$TREE" && die "failed to write tree"
+
+        COMMIT=$(echo "$DESCRIPTION" | git commit-tree ${TREE} ${COMMIT_PARENT_ARGS})
+        test -z "$COMMIT" && die "failed to create commit"
+
+        echo "$COMMIT" > "${GIT_DIR}/refs/heads/$GIT_CASE_HEAD"
+}
+
 function die() {
         echo $@ >&2
         exit 1
