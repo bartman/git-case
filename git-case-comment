@@ -18,7 +18,9 @@ COMMENT_NAME=$(date +%Y%m%d-%H%M%S.%N)
 # we work in the working dir
 go_to_git_case_work_dir
 
-git checkout cases -- ${ID}
+git read-tree -i --reset "$GIT_CASE_HEAD"
+git checkout-index
+
 mkdir -p "$ID/comments"
 echo "$COMMENT" > "$ID/comments/$COMMENT_NAME"
 

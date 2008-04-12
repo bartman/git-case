@@ -39,8 +39,6 @@ What works...
 
   * commenting
 
-    (this is kinda broken, it will break the index)
-
     $ ./git-case-comment some text goes here
 
 
