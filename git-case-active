@@ -8,7 +8,12 @@
 source git-case-common
 
 ID=$1
-test -z "$ID" && die "$0 <case-id>"
+if test -z "$ID" ; then
+        active=$(cat "${GIT_CASE_ACTIVE}" 2>/dev/null || true)
+        test -z "$active" && die "no case active"
+        echo "Active case: $active"
+        exit 0
+fi
 
 CNT=$(git ls-tree cases | awk " /\<${ID}[a-zA-Z0-9.-]*$/"'{ print $4 }' | wc -l)
 test "$CNT" -gt 1 && die "ID is ambiguous, select a full ID"
