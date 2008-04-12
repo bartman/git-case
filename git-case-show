@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+# Assumptions:
+#  - in a git repository
+#  - we can access git-case-common
+#  - the branch defined by GIT_CASE_HEAD exists (see git-case-common)
+
+source git-case-common
+
+ID=$(cat "$GIT_CASE_ACTIVE" 2>/dev/null || true)
+test -z "$ID" && die "no active case set"
+
+CASE_ROOT="cases:${ID}"
+
+desc=$(git show "$CASE_ROOT/description" || true)
+test -z "$desc" && die "active case is not valid"
+
+state=$(git show "$CASE_ROOT/state" || true)
+found=$(git show "$CASE_ROOT/found" || true)
+version=$(git show "$CASE_ROOT/version" || true)
+
+found=$(git log -1 --pretty=oneline --abbrev-commit "$found" || echo "$found")
+
+echo "Description: $desc"
+echo "State:       $state"
+echo "Found in:    $found"
+echo "Version:     $version"
+echo
+
+COMMENT_FILESS=$(git ls-tree cases -- "$ID/comments/")
+test -z "$COMMENT_FILESS" && exit 0
+
+echo "Comments..."
+git ls-tree cases -- "$ID/comments/" | while read mode type object file ; do
+        if test $type = blob ; then
+                short=${file##*/}
+                echo "  $short"
+                git cat-file blob $object | sed 's/^/    /'
+                echo
+        fi
+done
