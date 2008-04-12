@@ -1,0 +1,35 @@
+References:
+
+  Wiki:        http://www.jukie.net/~bart/kwiki/index.cgi?GitBugTracker
+  Git via ssh: tachyon.jukie.net:/home/git/git-case.git
+  Public git:  git://tachyon.jukie.net/git-case.git
+
+Few points about implementation...
+
+  * code uses .git/case/index for temporary index
+  * code uses .git/case/tmp/ for temporary scratch space
+  * code uses 'cases' branch to create history for cases
+
+What works...
+
+  * creating new cases
+
+    # ./git-case-new this is the first bug
+    # ./git-case-new this is the second bug
+    # ./git-case-new this is the third bug
+
+    # git log --pretty=oneline --abbrev-commit cases
+    d9b6ed9... this is the third bug
+    ebed5ce... this is the second bug
+    b509ec0... this is the first bug
+
+  * listing cases
+
+    # ./git-case-list
+    20080411-212534.972171044    [new]   this is the first bug
+    20080411-212536.724080296    [new]   this is the second bug
+    20080411-212538.618258258    [new]   this is the third bug
+
+  (I am not sure what to do with the case IDs yet, so for now it's a timestamp).
+ 
+
