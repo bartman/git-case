@@ -15,10 +15,10 @@ if test -z "$ID" ; then
         exit 0
 fi
 
-CNT=$(git ls-tree cases | awk " /\<${ID}[a-zA-Z0-9.-]*$/"'{ print $4 }' | wc -l)
+CNT=$(git ls-tree cases | awk "/\<${ID}[a-fA-F0-9]*$/"'{ print $4 }' | wc -l)
 test "$CNT" -gt 1 && die "ID is ambiguous, select a full ID"
 test "$CNT" -lt 1 && die "ID does not match a case"
 
-FULL_ID=$(git ls-tree cases | awk " /\<${ID}[a-zA-Z0-9-]*$/"'{ print $4 }')
+FULL_ID=$(git ls-tree cases | awk "/\<${ID}[a-fA-F0-9]*$/"'{ print $4 }')
 
 echo "$FULL_ID" > "${GIT_CASE_ACTIVE}"
