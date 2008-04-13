@@ -1,0 +1,34 @@
+Note that the interface still needs work.  This is just meant to be a
+prototype demonstrating that things could be done to work this way.
+
+# ./git-case-new bug number 1
+# ./git-case-list
+20080413-015457.293088787    [new]   bug number 1
+
+# ./git-case-active 20080413-015457
+
+# ./git-case-attach testfile "this is a test file"
+
+# git show cases:
+tree cases:
+20080413-015457.293088787-bug-number-1/
+
+# git show cases:20080413-015457.293088787-bug-number-1/
+tree cases:20080413-015457.293088787-bug-number-1/
+comments/
+description
+files/
+found
+state
+
+# git show cases:20080413-015457.293088787-bug-number-1/comments/
+tree cases:20080413-015457.293088787-bug-number-1/comments/
+20080413-015522.552415741
+
+# git show cases:20080413-015457.293088787-bug-number-1/comments/20080413-015522.552415741
+this is a test file
+
+Attachment: testfile 16b14f5da9e2fcd6f3f38cc9e584cef2f3c90ebe
+
+# git cat-file blob 16b14f5da9e2fcd6f3f38cc9e584cef2f3c90ebe
+test file

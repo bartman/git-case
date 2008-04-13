@@ -31,7 +31,7 @@ git checkout-index
 
 mkdir -p "$ID/comments"
 echo "$COMMENT" > "$ID/comments/$COMMENT_NAME"
-echo -e "\nAttachment: $FILE_BASE $FILE_SHA1" > "$ID/comments/$COMMENT_NAME"
+echo -e "\nAttachment: $FILE_BASE $FILE_SHA1" >> "$ID/comments/$COMMENT_NAME"
 
 git update-index --add "$ID/comments/$COMMENT_NAME"
 
