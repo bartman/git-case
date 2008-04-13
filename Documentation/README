@@ -41,4 +41,8 @@ What works...
 
     $ ./git-case-comment some text goes here
 
+  * attaching a file while commenting
+
+    $ ./git-case-attach file-name some text to describe it
+
 

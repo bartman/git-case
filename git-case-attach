@@ -1,0 +1,43 @@
+#!/bin/bash
+#
+# Assumptions:
+#  - in a git repository
+#  - we can access git-case-common
+#  - the branch defined by GIT_CASE_HEAD exists (see git-case-common)
+
+source git-case-common
+
+FILE="$1" ; shift
+COMMENT="$@"
+test -z "$FILE" -o -z "$COMMENT" && die "$0 <file> <text>"
+test -f "$FILE" || die "$FILE is not a regular file"
+
+ID=$(cat "$GIT_CASE_ACTIVE" 2>/dev/null || true)
+test -z "$ID" && die "no active case set"
+
+COMMENT_NAME=$(date +%Y%m%d-%H%M%S.%N)
+
+if test "${FILE:0:1}" != / ; then
+        FILE="$(pwd)/$FILE"
+fi
+FILE_SHA1=$(git hash-object "$FILE")
+FILE_BASE=$(basename "$FILE")
+
+# we work in the working dir
+go_to_git_case_work_dir
+
+git read-tree -i --reset "$GIT_CASE_HEAD"
+git checkout-index
+
+mkdir -p "$ID/comments"
+echo "$COMMENT" > "$ID/comments/$COMMENT_NAME"
+
+git update-index --add "$ID/comments/$COMMENT_NAME"
+
+mkdir -p "$ID/files/$FILE_BASE"
+cp "$FILE" "$ID/files/$FILE_BASE/$FILE_SHA1"
+
+git update-index --add "$ID/files/$FILE_BASE/$FILE_SHA1"
+
+commit_index_and_update_branch "comment on $ID, attached $FILE_BASE" "-p $GIT_CASE_HEAD"
+
