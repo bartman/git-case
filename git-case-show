@@ -17,14 +17,12 @@ test -z "$desc" && die "active case is not valid"
 
 state=$(git show "$CASE_ROOT/state" || true)
 found=$(git show "$CASE_ROOT/found" || true)
-version=$(git show "$CASE_ROOT/version" || true)
 
 found=$(git log -1 --pretty=oneline --abbrev-commit "$found" || echo "$found")
 
 echo "Description: $desc"
 echo "State:       $state"
 echo "Found in:    $found"
-echo "Version:     $version"
 echo
 
 COMMENT_FILESS=$(git ls-tree cases -- "$ID/comments/")
