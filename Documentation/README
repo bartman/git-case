@@ -1,19 +1,51 @@
-References:
+# About
 
-  Wiki:        http://www.jukie.net/~bart/kwiki/index.cgi?GitBugTracker
-  Git via ssh: tachyon.jukie.net:/home/git/git-case.git
-  Public git:  git://tachyon.jukie.net/git-case.git
+Please note that this file uses Markdown notation.
+ * [markdown syntax for vim](http://www.vim.org/scripts/script.php?script_id=1242)
+ * [markdown basics](http://daringfireball.net/projects/markdown/basics)
+
+# Implementation
+
+## General
 
 Few points about implementation...
 
-  * code uses .git/case/index for temporary index
-  * code uses .git/case/active for current case
-  * code uses .git/case/tmp/ for temporary scratch space
-  * code uses 'cases' branch to create history for cases
+ * code uses .git/case/index for temporary index
+ * code uses .git/case/active for current case
+ * code uses .git/case/tmp/ for temporary scratch space
+ * code uses 'cases' branch to create history for cases
 
-What works...
+## Datastore
 
-  * creating new cases
+In the 'cases' branch, git-case stores each case in it's own directory.
+The directory contains all information about the case.  Each change to
+the case creates a new commit on the 'cases' branch.
+
+    <id>/               # directory per case
+    |-- description     # 1st line title, then free form description
+    |-- type            # bug/feature/question/...
+    |-- found           # git commit worktree was in when case created RO
+    |-- state           # new/open/invalid/etc
+    |-- assigned        # name <email>
+    |-- marks/          # list of marks - tags in most tracker talk
+    |   `-- <name>      # empty file
+    |-- comments/       # comments, one per file
+    |   `-- <sha1>      # contains arbitrary text
+    |-- files/          # attachements to the case/comment
+    |   `-- <filename>/ # the name of the dir is actually the name of the file
+    |       `-- <sha1>  # hash of the file, contais the file
+    |-- good-ids/       # IDs in source where this was not an issue
+    |   `-- <sha1>      # empty file
+    |-- bad-ids/        # IDs in source where this was a bug
+    |   `-- <sha1>      # empty file
+    `-- fields/         # additional fields
+        `-- <name>      # contains one line of text
+
+There is a bit more information on the wiki page, see below.
+
+# Completed commands
+
+## creating new cases
 
     # ./git-case-new this is the first bug
     # ./git-case-new this is the second bug
@@ -24,26 +56,33 @@ What works...
     ebed5ce... this is the second bug
     b509ec0... this is the first bug
 
-  * listing cases
+## listing cases
 
     # ./git-case-list
     20080411-212534.972171044    [new]   this is the first bug
     20080411-212536.724080296    [new]   this is the second bug
     20080411-212538.618258258    [new]   this is the third bug
 
-  (I am not sure what to do with the case IDs yet, so for now it's a timestamp).
+  I am not sure what to do with the case IDs yet, so for now it's a timestamp.
 
-  * activating a case
+## activating a case
 
-    $ ./git-case-active 20080411-212534.972171044
+    # ./git-case-active 20080411-212534.972171044
 
-  * commenting
+## commenting
 
-    $ ./git-case-comment some text goes here
+    # ./git-case-comment some text goes here
 
-  * attaching a file while commenting
+## attaching a file while commenting
 
-    $ ./git-case-attach file-name some text to describe it
+    # ./git-case-attach file-name some text to describe it
 
 
-vim: set ts=8 et sw=8 tw=72
+# References:
+
+  Wiki:        http://www.jukie.net/~bart/kwiki/index.cgi?GitBugTracker
+  Git via ssh: tachyon.jukie.net:/home/git/git-case.git
+  Public git:  git://tachyon.jukie.net/git-case.git
+
+
+vim: set ts=8 et sw=8 tw=72 ft=mkd
