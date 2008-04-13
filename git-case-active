@@ -11,7 +11,7 @@ ID=$1
 if test -z "$ID" ; then
         active=$(cat "${GIT_CASE_ACTIVE}" 2>/dev/null || true)
         test -z "$active" && die "no case active"
-        echo "Active case: $active"
+        echo "$active"
         exit 0
 fi
 
