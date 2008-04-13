@@ -3,6 +3,28 @@
 set -e
 
 # ------------------------------------------------------------------------
+# helpers
+
+function die() {
+        echo $@ >&2
+        exit 1
+}
+
+# ------------------------------------------------------------------------
+# make sure the user has a sane environment
+
+if test -z "$GIT_COMMITTER_NAME" ; then
+	export GIT_COMMITTER_NAME=$(git config --get user.name)
+fi
+if test -z "$GIT_COMMITTER_EMAIL" ; then
+	export GIT_COMMITTER_EMAIL=$(git config --get user.email)
+fi
+
+test -z "$GIT_COMMITTER_NAME" \
+  -o -z "$GIT_COMMITTER_EMAIL" \
+&& die "please set GIT_COMMITTER_NAME and GIT_COMMITTER_EMAIL"
+
+# ------------------------------------------------------------------------
 # find the .git dir
 
 GIT_DIR=$(git rev-parse --git-dir)
@@ -37,20 +59,16 @@ function go_to_git_case_work_dir() {
 }
 
 function commit_index_and_update_branch() {
-        DESCRIPTION=$1
-        COMMIT_PARENT_ARGS=$2
+        local DESCRIPTION=$1
+        local COMMIT_PARENT_ARGS=$2
 
-        TREE=$(git write-tree)
+        local TREE=$(git write-tree)
         test -z "$TREE" && die "failed to write tree"
 
-        COMMIT=$(echo "$DESCRIPTION" | git commit-tree ${TREE} ${COMMIT_PARENT_ARGS})
+        local COMMIT=$(echo "$DESCRIPTION" | git commit-tree ${TREE} ${COMMIT_PARENT_ARGS})
         test -z "$COMMIT" && die "failed to create commit"
 
         echo "$COMMIT" > "${GIT_DIR}/refs/heads/$GIT_CASE_HEAD"
 }
 
-function die() {
-        echo $@ >&2
-        exit 1
-}
-
+# vim: set ft=sh ts=8 noet sw=8 tw=72
