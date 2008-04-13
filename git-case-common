@@ -87,5 +87,11 @@ function commit_index_and_update_branch() {
         echo "$COMMIT" > "${GIT_DIR}/refs/heads/$GIT_CASE_HEAD"
 }
 
+function gen_short_case_id() {
+	local long=$1
+
+	echo "${long:0:6}"
+}
+
 
 # vim: set ft=sh ts=8 noet sw=8 tw=72

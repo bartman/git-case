@@ -8,9 +8,9 @@ source git-case-common
 
 git ls-tree cases -- . | while read mode type object file ; do
         if test $type = tree ; then
-                short=$(echo $file | cut -d- -f -2)
-                desc=$(git show cases:$file/description)
+                short=$(gen_short_case_id $file)
+                desc=$(git show cases:$file/description | head -n1)
                 state="["$(git show cases:$file/state)"]"
-                printf "%-26s   %5s   %s\n" "$short" "$state" "$desc"
+                printf "%6s   %7s  %s\n" "$short" "$state" "$desc"
         fi
 done
