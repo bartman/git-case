@@ -46,3 +46,4 @@ What works...
     $ ./git-case-attach file-name some text to describe it
 
 
+vim: set ts=8 et sw=8 tw=72

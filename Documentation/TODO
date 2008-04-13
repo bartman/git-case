@@ -1,0 +1,102 @@
+# Short term release goals
+
+## About
+
+Please note that this file uses Markdown notation.
+ - [markdown syntax for vim](http://www.vim.org/scripts/script.php?script_id=1242)
+ - [markdown basics](http://daringfireball.net/projects/markdown/basics)
+
+
+## Release v0.1
+
+### Overview:
+
+ - proof of concept in bash
+ - low on features
+
+### Objectives:
+
+ - experiment with git plumbing
+ - concentrate on data store
+ - prototype major commands
+
+### Outstanding tasks:
+
+ - **bartman to** fill in missing fields in datastore
+ - **bartman to** convert <case-id> to be a sha1 of *$STUFF*
+ - Complete these prototypes:
+   - git-case-mark [-d] [<id>] <tag_name> ...
+   - git-case-grep [–[desc|comment|field|mark]=<text> ...] [<text>]
+   - git-case-state [<id>] <state> <comment message>
+   - git-case-get [<id>] <field>
+   - git-case-set [<id>] <field> <value>
+   - git-case-ids [-c] [<id>]
+   - git-case-good [[<id>] <commitish>]
+   - git-case-bad [[<id>] <commitish>]
+
+
+
+## Release v0.2
+
+### Overview:
+
+ - perl based framework
+ - define git-case interface
+
+### Objectives:
+
+ - elimination of bash scripts
+ - model git-case perl script after git-svn
+ - limit dependencies to those already defined by git-svn
+ - explore improvements to interface
+
+### Outstanding tasks:
+
+ - **dave0 to** start a perl prototype
+ - convert bash prototype to perl
+ - make sure that names are limited to, say, `[a-zA-Z-9][a-zA-Z0-9._-]*`
+
+
+
+## Release v0.3
+
+### Overview:
+
+ - usability improvements
+ - documentation
+
+### Objectives:
+
+ - more options
+ - better polish
+ - colour output
+ - man pages
+
+### Outstanding tasks:
+
+ - TBD
+
+
+
+## Future:
+
+ - multiple bug branch support
+ - products and components
+ - bug dependencies
+ - git hooks
+   - trigger on commands in commit messages (like "closes case XXX")
+ - git case hooks
+ - default owners
+ - severity and priority
+ - web UI
+ - rebase integration
+ - optional banners for output (easy to parse vs easy for humans)
+ - gitk integration
+ - git bisect integration
+ - sending email
+ - receiving email
+
+
+
+
+vim: set ts=8 et sw=8 tw=72 ft=mkd
