@@ -9,16 +9,16 @@ source git-case-common
 DESCRIPTION=$@
 test -z "$DESCRIPTION" && die "$0 <description>"
 
-CASE_NAME=$(date +%Y%m%d-%H%M%S.%N-)$(echo -n "$DESCRIPTION" | tr -c "a-zA-Z0-9" -)
+CASE_ID=$(generate_case_id "$DESCRIPTION")
 
 # we work in the working dir
 go_to_git_case_work_dir
 
 # build the tree
-mkdir -p "$CASE_NAME"
-echo "$DESCRIPTION"                           > "$CASE_NAME/description"
-git rev-parse HEAD                            > "$CASE_NAME/found"
-echo new                                      > "$CASE_NAME/state"
+mkdir -p "$CASE_ID"
+echo "$DESCRIPTION"                           > "$CASE_ID/description"
+git rev-parse HEAD                            > "$CASE_ID/found"
+echo new                                      > "$CASE_ID/state"
 
 COMMIT_PARENT_ARGS=
 if test -n "$(git-rev-parse --revs-only ${GIT_CASE_HEAD})" ; then
@@ -31,9 +31,9 @@ else
         git rm --cached -q -r .
 fi
 
-git update-index --add "$CASE_NAME/description"
-git update-index --add "$CASE_NAME/found"
-git update-index --add "$CASE_NAME/state"
+git update-index --add "$CASE_ID/description"
+git update-index --add "$CASE_ID/found"
+git update-index --add "$CASE_ID/state"
 
 commit_index_and_update_branch "$DESCRIPTION" "$COMMIT_PARENT_ARGS"
 

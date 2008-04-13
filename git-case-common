@@ -58,6 +58,22 @@ function go_to_git_case_work_dir() {
         cd "$GIT_CASE_WORK_DIR"
 }
 
+function generate_case_id() {
+	local description=$1
+
+	local date=$(date +%Y%m%d-%H%M%S.%N)
+	local salt="Commiter: $GIT_COMMITTER_NAME <$GIT_COMMITTER_EMAIL>
+Date: $date
+Description: $description"
+
+	local sha1=$(echo "$salt" | git hash-object --stdin)
+
+	test -z "$(git ls-tree "$GIT_CASE_HEAD" -- "$sha1")" \
+	|| die "holly crap, there is a collision on $sha1"
+
+	echo "$sha1"
+}
+
 function commit_index_and_update_branch() {
         local DESCRIPTION=$1
         local COMMIT_PARENT_ARGS=$2
@@ -70,5 +86,6 @@ function commit_index_and_update_branch() {
 
         echo "$COMMIT" > "${GIT_DIR}/refs/heads/$GIT_CASE_HEAD"
 }
+
 
 # vim: set ft=sh ts=8 noet sw=8 tw=72
