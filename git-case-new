@@ -16,9 +16,11 @@ go_to_git_case_work_dir
 
 # build the tree
 mkdir -p "$CASE_ID"
-echo "$DESCRIPTION"                           > "$CASE_ID/description"
-git rev-parse HEAD                            > "$CASE_ID/found"
-echo new                                      > "$CASE_ID/state"
+echo "$DESCRIPTION"                               > "$CASE_ID/description"
+echo bug                                          > "$CASE_ID/type"
+git rev-parse HEAD                                > "$CASE_ID/found"
+echo new                                          > "$CASE_ID/state"
+echo "$GIT_COMMITTER_NAME <$GIT_COMMITTER_EMAIL>" > "$CASE_ID/assigned"
 
 COMMIT_PARENT_ARGS=
 if test -n "$(git-rev-parse --revs-only ${GIT_CASE_HEAD})" ; then
@@ -32,8 +34,10 @@ else
 fi
 
 git update-index --add "$CASE_ID/description"
+git update-index --add "$CASE_ID/type"
 git update-index --add "$CASE_ID/found"
 git update-index --add "$CASE_ID/state"
+git update-index --add "$CASE_ID/assigned"
 
 commit_index_and_update_branch "$DESCRIPTION" "$COMMIT_PARENT_ARGS"
 
