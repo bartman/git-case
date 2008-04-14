@@ -54,11 +54,8 @@ git read-tree -i --reset "$GIT_CASE_HEAD"
 git checkout-index
 
 if test "$action" = "set" ; then
-        mkdir -p "$ID/fields"
-        echo "$VALUE" > "$FIELD_FILE"
-        git update-index --add "$FIELD_FILE"
+        add_file_to_index "$FIELD_FILE" "$VALUE"
 else
-        rm -f "$FIELD_FILE"
         git update-index --remove "$FIELD_FILE"
 fi
 
