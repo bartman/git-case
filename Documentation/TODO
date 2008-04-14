@@ -28,6 +28,7 @@ Please note that this file uses Markdown notation.
    - git-case-ids [-c] [<id>]
    - git-case-good [[<id>] <commitish>]
    - git-case-bad [[<id>] <commitish>]
+ - make access to .git/case/ work for concurrent users
 
 
 
@@ -67,6 +68,7 @@ Please note that this file uses Markdown notation.
  - colour output
  - man pages
  - support bare repositories
+ - support concurrent access
 
 ### Outstanding tasks:
 
