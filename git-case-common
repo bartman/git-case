@@ -87,18 +87,13 @@ function add_file_to_index() {
 	local FILE_NAME=$1
 	local CONTENTS=$2		# optional
 
-	echo fed "${#@}" >&2
-	
 	local FEED=
 	if test "${#@}" = 2 ; then
 		FEED="echo '$CONTENTS' |"
 	fi
-	echo "FEED=$FEED" >&2
 
 	local cmd="$FEED git-hash-object -t blob -w --stdin"
-	echo "cmd=$cmd" >&2
 	local FILE_ID=$(eval $cmd)
-	echo "FILE_ID=$FILE_ID" >&2
 	git update-index --add --cacheinfo 100644 "$FILE_ID" "$FILE_NAME"
 }
 
