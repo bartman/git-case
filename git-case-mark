@@ -38,11 +38,8 @@ git read-tree -i --reset "$GIT_CASE_HEAD"
 git checkout-index
 
 if test "$action" = "set" ; then
-        mkdir -p "$ID/marks"
-        touch "$MARK_FILE"
-        git update-index --add "$MARK_FILE"
+        add_file_to_index "$MARK_FILE" ""
 else
-        rm -f "$MARK_FILE"
         git update-index --remove "$MARK_FILE"
 fi
 
