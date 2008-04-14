@@ -52,22 +52,22 @@ There is a bit more information on the wiki page, see below.
     # ./git-case-new this is the third bug
 
     # git log --pretty=oneline --abbrev-commit cases
-    d9b6ed9... this is the third bug
-    ebed5ce... this is the second bug
-    b509ec0... this is the first bug
+    5d67789... this is the third bug
+    2785704... this is the second bug
+    3e75d93... this is the first bug
 
 ## listing cases
 
     # ./git-case-list
-    20080411-212534.972171044    [new]   this is the first bug
-    20080411-212536.724080296    [new]   this is the second bug
-    20080411-212538.618258258    [new]   this is the third bug
-
-  I am not sure what to do with the case IDs yet, so for now it's a timestamp.
+    c11bce     [new]  this is the third bug
+    cb2193     [new]  this is the first bug
+    d5f5e8     [new]  this is the second bug
 
 ## activating a case
 
-    # ./git-case-active 20080411-212534.972171044
+    # ./git-case-active c11bce
+    # ./git-case-active
+    c11bcecc97b0cd1a7e5bc420890b6b20c7fe2132
 
 ## commenting
 
@@ -76,6 +76,29 @@ There is a bit more information on the wiki page, see below.
 ## attaching a file while commenting
 
     # ./git-case-attach file-name some text to describe it
+
+## displaying a case
+
+    # ./git-case-show
+    Case ID:     c11bce (c11bcecc97b0cd1a7e5bc420890b6b20c7fe2132)
+    Description: this is the third bug
+    Type:        bug
+    State:       new
+    Found in:    91ec508... remove the prefix to git-case-active query
+
+    Comments...
+      20080413-205926.668903871
+        some text goes here
+
+      20080413-205939.925596271
+        some text to describe it
+        
+        Attachment: file-name 16b14f5da9e2fcd6f3f38cc9e584cef2f3c90ebe
+
+## setting and clearing marks
+
+    # ./git-case-mark fixme
+    # ./git-case-mark -d fixme
 
 
 # References:

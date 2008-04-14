@@ -1,0 +1,48 @@
+#!/bin/bash
+#
+# Assumptions:
+#  - in a git repository
+#  - we can access git-case-common
+#  - the branch defined by GIT_CASE_HEAD exists (see git-case-common)
+
+source git-case-common
+
+action="set"
+if test "$1" = "-d" ; then
+        action="removed"
+        shift
+fi
+
+MARK="$1"
+test -z "$MARK" && die "$0 [-d] <mark-name>"
+echo "$MARK" | grep -q '^[a-zA-Z0-9][a-zA-Z0-9._-]*$' || die "format of mark '$MARK' is invalid"
+
+ID=$(cat "$GIT_CASE_ACTIVE" 2>/dev/null || true)
+test -z "$ID" && die "no active case set"
+
+MARK_FILE="$ID/marks/$MARK"
+
+count=$(git ls-tree cases "$MARK_FILE" | wc -l)
+if test "$action" = "set" -a "$count" -ne "0" ; then
+        die "mark '$MARK' already set on case ${ID:0:6}"
+fi
+if test "$action" = "removed" -a "$count" -ne "1" ; then
+        die "no mark '$MARK' set on case ${ID:0:6}"
+fi
+
+# we work in the working dir
+go_to_git_case_work_dir
+
+git read-tree -i --reset "$GIT_CASE_HEAD"
+git checkout-index
+
+if test "$action" = "set" ; then
+        mkdir -p "$ID/marks"
+        touch "$MARK_FILE"
+        git update-index --add "$MARK_FILE"
+else
+        rm -f "$MARK_FILE"
+        git update-index --remove "$MARK_FILE"
+fi
+
+commit_index_and_update_branch "mark '$MARK' $action on $ID" "-p $GIT_CASE_HEAD"

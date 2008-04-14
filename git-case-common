@@ -68,7 +68,7 @@ Description: $description"
 
 	local sha1=$(echo "$salt" | git hash-object --stdin)
 
-	test -z "$(git ls-tree "$GIT_CASE_HEAD" -- "$sha1")" \
+	test -z "$(git ls-tree "$GIT_CASE_HEAD" -- "$sha1" 2>/dev/null)" \
 	|| die "holly crap, there is a collision on $sha1"
 
 	echo "$sha1"
