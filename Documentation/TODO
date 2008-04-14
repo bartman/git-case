@@ -22,13 +22,9 @@ Please note that this file uses Markdown notation.
 
 ### Outstanding tasks:
 
- - **bartman to** fill in missing fields in datastore
- - **bartman to** convert <case-id> to be a sha1 of *$STUFF*
- - Complete these prototypes:
+ - **bartman to** complete these prototypes:
    - git-case-grep [–[desc|comment|field|mark]=<text> ...] [<text>]
    - git-case-state [<id>] <state> <comment message>
-   - git-case-get [<id>] <field>
-   - git-case-set [<id>] <field> <value>
    - git-case-ids [-c] [<id>]
    - git-case-good [[<id>] <commitish>]
    - git-case-bad [[<id>] <commitish>]

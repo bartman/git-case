@@ -100,6 +100,12 @@ There is a bit more information on the wiki page, see below.
     # ./git-case-mark fixme
     # ./git-case-mark -d fixme
 
+## setting and clearing custom fields
+
+    # ./git-case-field variable value
+    # ./git-case-field variable
+    value
+    # ./git-case-field -d variable
 
 # References:
 
