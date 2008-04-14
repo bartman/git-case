@@ -19,7 +19,6 @@ COMMENT_NAME=$(date +%Y%m%d-%H%M%S.%N)
 go_to_git_case_work_dir
 
 git read-tree -i --reset "$GIT_CASE_HEAD"
-git checkout-index
 
 add_file_to_index "$ID/comments/$COMMENT_NAME" "$COMMENT"
 

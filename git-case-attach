@@ -27,7 +27,6 @@ FILE_BASE=$(basename "$FILE")
 go_to_git_case_work_dir
 
 git read-tree -i --reset "$GIT_CASE_HEAD"
-git checkout-index
 
 echo -e "$COMMENT\n\nAttachment: $FILE_BASE $FILE_SHA1" \
 | add_file_to_index "$ID/comments/$COMMENT_NAME" 
