@@ -14,14 +14,6 @@ CASE_ID=$(generate_case_id "$DESCRIPTION")
 # we work in the working dir
 go_to_git_case_work_dir
 
-# build the tree
-mkdir -p "$CASE_ID"
-echo "$DESCRIPTION"                               > "$CASE_ID/description"
-echo bug                                          > "$CASE_ID/type"
-git rev-parse HEAD                                > "$CASE_ID/found"
-echo new                                          > "$CASE_ID/state"
-echo "$GIT_COMMITTER_NAME <$GIT_COMMITTER_EMAIL>" > "$CASE_ID/assigned"
-
 COMMIT_PARENT_ARGS=
 if test -n "$(git-rev-parse --revs-only ${GIT_CASE_HEAD})" ; then
         # already initialized, reset index to last commit
@@ -32,11 +24,14 @@ else
         git read-tree -i --reset $(printf '' | git-write-tree)
 fi
 
-git update-index --add "$CASE_ID/description"
-git update-index --add "$CASE_ID/type"
-git update-index --add "$CASE_ID/found"
-git update-index --add "$CASE_ID/state"
-git update-index --add "$CASE_ID/assigned"
+# build the tree
+add_file_to_index "$CASE_ID/description" "$DESCRIPTION"
+add_file_to_index "$CASE_ID/type"        "bug"
+add_file_to_index "$CASE_ID/state"       "new"
+add_file_to_index "$CASE_ID/assigned"    "$GIT_COMMITTER_NAME <$GIT_COMMITTER_EMAIL>"
+
+git rev-parse HEAD | add_file_to_index "$CASE_ID/found"
+date               | add_file_to_index "$CASE_ID/created"
 
 commit_index_and_update_branch "$DESCRIPTION" "$COMMIT_PARENT_ARGS"
 
