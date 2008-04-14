@@ -29,8 +29,7 @@ if test -n "$(git-rev-parse --revs-only ${GIT_CASE_HEAD})" ; then
         COMMIT_PARENT_ARGS="-p $GIT_CASE_HEAD"
 else
         # reset the cache
-        git read-tree -i --reset HEAD
-        git rm --cached -q -r .
+        git read-tree -i --reset $(printf '' | git-write-tree)
 fi
 
 git update-index --add "$CASE_ID/description"
