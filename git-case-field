@@ -1,0 +1,66 @@
+#!/bin/bash
+#
+# Assumptions:
+#  - in a git repository
+#  - we can access git-case-common
+#  - the branch defined by GIT_CASE_HEAD exists (see git-case-common)
+
+source git-case-common
+
+test -z "$1" && die "$0 [-d] <field-name> [<value>]"
+
+if test "$1" = "-d" ; then
+        test "${#@}" = 2 || die "when deleting syntax is: $0 -d <field-name>"
+
+        action="removed"
+        FIELD="$2"
+
+elif test "${#@}" = 1 ; then
+        action="read"
+        FIELD="$1"
+
+elif test "${#@}" = 2 ; then
+        action="set"
+        FIELD="$1" ; shift
+        VALUE="$@"
+
+else
+        die "too many arguments"
+fi
+
+echo "$FIELD" | grep -q '^[a-zA-Z0-9][a-zA-Z0-9._-]*$' || die "format of field '$FIELD' is invalid"
+
+ID=$(cat "$GIT_CASE_ACTIVE" 2>/dev/null || true)
+test -z "$ID" && die "no active case set"
+
+FIELD_FILE="$ID/fields/$FIELD"
+
+count=$(git ls-tree cases "$FIELD_FILE" | wc -l)
+if test "$action" = "removed" -a "$count" -ne "1" ; then
+        die "no field '$FIELD' set on case ${ID:0:6}"
+fi
+
+# handle read first
+if test "$action" = "read" ; then
+        test "$count" -ne "1" && die "no field '$FIELD' set on case ${ID:0:6}"
+
+        exec git show "cases:$FIELD_FILE"
+fi
+
+# we work in the working dir
+go_to_git_case_work_dir
+
+git read-tree -i --reset "$GIT_CASE_HEAD"
+git checkout-index
+
+if test "$action" = "set" ; then
+        mkdir -p "$ID/fields"
+        echo "$VALUE" > "$FIELD_FILE"
+        git update-index --add "$FIELD_FILE"
+else
+        rm -f "$FIELD_FILE"
+        git update-index --remove "$FIELD_FILE"
+fi
+
+commit_index_and_update_branch "field '$FIELD' $action on $ID" "-p $GIT_CASE_HEAD"
+
