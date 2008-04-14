@@ -30,6 +30,19 @@ echo "Found in:    $found"
 MARKS=$(git ls-tree cases "$ID/marks/" | awk -F/ '{ print $3 }' | xargs)
 test -n "$MARKS" && echo "Marks:       $MARKS"
 
+FIELDS=$(git ls-tree cases "$ID/fields/" | awk -F/ '{ print $3 }' | xargs)
+if test -n "$FIELDS" ; then
+        echo
+        echo "Fields..."
+        git ls-tree cases -- "$ID/fields/" | while read mode type object file ; do
+                if test $type = blob ; then
+                        short=${file##*/}:
+                        printf "  * %-10s" $short
+                        git cat-file blob $object | sed 's/^/      /'
+                fi
+        done
+fi
+
 COMMENT_FILESS=$(git ls-tree cases -- "$ID/comments/")
 test -z "$COMMENT_FILESS" && exit 0
 
@@ -38,8 +51,8 @@ echo "Comments..."
 git ls-tree cases -- "$ID/comments/" | while read mode type object file ; do
         if test $type = blob ; then
                 short=${file##*/}
-                echo "  $short"
-                git cat-file blob $object | sed 's/^/    /'
+                echo "  * $short"
+                git cat-file blob $object | sed 's/^/      /'
                 echo
         fi
 done
