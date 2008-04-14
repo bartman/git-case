@@ -29,16 +29,11 @@ go_to_git_case_work_dir
 git read-tree -i --reset "$GIT_CASE_HEAD"
 git checkout-index
 
-mkdir -p "$ID/comments"
-echo "$COMMENT" > "$ID/comments/$COMMENT_NAME"
-echo -e "\nAttachment: $FILE_BASE $FILE_SHA1" >> "$ID/comments/$COMMENT_NAME"
+echo -e "$COMMENT\n\nAttachment: $FILE_BASE $FILE_SHA1" \
+| add_file_to_index "$ID/comments/$COMMENT_NAME" 
 
-git update-index --add "$ID/comments/$COMMENT_NAME"
-
-mkdir -p "$ID/files/$FILE_BASE"
-cp "$FILE" "$ID/files/$FILE_BASE/$FILE_SHA1"
-
-git update-index --add "$ID/files/$FILE_BASE/$FILE_SHA1"
+cat "$FILE" \
+| add_file_to_index "$ID/files/$FILE_BASE/$FILE_SHA1"
 
 commit_index_and_update_branch "comment on $ID, attached $FILE_BASE" "-p $GIT_CASE_HEAD"
 
