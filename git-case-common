@@ -24,6 +24,15 @@ test -z "$GIT_COMMITTER_NAME" \
   -o -z "$GIT_COMMITTER_EMAIL" \
 && die "please set GIT_COMMITTER_NAME and GIT_COMMITTER_EMAIL"
 
+LOCAL_GIT_VERSION=$(git version)
+LOCAL_GIT_VERSION=${LOCAL_GIT_VERSION##* }
+
+# we expect 1.5.5 or better
+echo "${LOCAL_GIT_VERSION}" | tr '.' ' ' \
+| ( read major minor patch rest ; \
+    test "$major" -gt 1 -o "$minor" -gt 5 -o "$patch" -ge 5 ) \
+    || die "we need git 1.5.5 or better"
+
 # ------------------------------------------------------------------------
 # find the .git dir
 
