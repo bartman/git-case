@@ -7,6 +7,8 @@
 
 source git-case-common
 
+test -z "$1" && die "$0 [-d] <mark-name>"
+
 action="set"
 if test "$1" = "-d" ; then
         action="removed"
@@ -14,7 +16,6 @@ if test "$1" = "-d" ; then
 fi
 
 MARK="$1"
-test -z "$MARK" && die "$0 [-d] <mark-name>"
 echo "$MARK" | grep -q '^[a-zA-Z0-9][a-zA-Z0-9._-]*$' || die "format of mark '$MARK' is invalid"
 
 ID=$(cat "$GIT_CASE_ACTIVE" 2>/dev/null || true)
