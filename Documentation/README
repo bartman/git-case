@@ -34,10 +34,8 @@ the case creates a new commit on the 'cases' branch.
     |-- files/          # attachements to the case/comment
     |   `-- <filename>/ # the name of the dir is actually the name of the file
     |       `-- <sha1>  # hash of the file, contais the file
-    |-- good-ids/       # IDs in source where this was not an issue
-    |   `-- <sha1>      # empty file
-    |-- bad-ids/        # IDs in source where this was a bug
-    |   `-- <sha1>      # empty file
+    |-- ids/            # commits for which the state of thsi bug is known
+    |   `-- <sha1>      # file contains either 'good' or 'bad'
     `-- fields/         # additional fields
         `-- <name>      # contains one line of text
 
@@ -114,6 +112,17 @@ There is a bit more information on the wiki page, see below.
     # ./git-case-state old
     # ./git-case-state
     old
+
+## adding good/bad ids
+
+    # ./git-case-ids -g HEAD
+    # ./git-case-ids -b HEAD~1
+    # ./git-case-ids -l
+    good 12799ccbe7ce445b11b7bd4833bcc2c2ce1b48b7
+    bad  67be85f1274474029aad8a75b823592324305aa4
+    # ./git-case-ids -d HEAD
+    # ./git-case-ids -l
+    bad  67be85f1274474029aad8a75b823592324305aa4
 
 # References:
 

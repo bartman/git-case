@@ -1,0 +1,72 @@
+#!/bin/bash
+#
+# Assumptions:
+#  - in a git repository
+#  - we can access git-case-common
+#  - the branch defined by GIT_CASE_HEAD exists (see git-case-common)
+
+source git-case-common
+
+test -z "$1" && die "$0 [-l] [ [-g|-b|-d] [<commitish>|-] [<comment>] ]
+    -l   list commits for active case
+    -g   good commit
+    -b   bad commit
+    -d   remove a commit
+using - for the <commitish> will use repo HEAD"
+
+CMD=$1 ; shift
+VALUE=
+case "$CMD" in
+    -g) CMD="good"               ;;  # good
+    -b) CMD="bad"                ;;  # bad
+    -d) CMD="deleted"            ;;  # ugly^wdelete
+    -l)                          ;;  # list
+    *) die "invalid mode '$CMD'" ;;
+esac
+
+CASE_ID=$(cat "$GIT_CASE_ACTIVE" 2>/dev/null || true)
+test -z "$CASE_ID" && die "no active case set"
+
+IDS_PATH="$CASE_ID/ids"
+
+if test "$CMD" = '-l' ; then
+        good=$(echo good | git hash-object -t blob --stdin)
+        git ls-tree cases -- "$IDS_PATH/" | while read mode type object file ; do
+                if test $type = blob ; then
+                        short=$(gen_short_case_id $file)
+                        if test "$object" = "$good" ; then
+                                echo -e "good $green$object$reset"
+                        else
+                                echo -e "bad  $red$object$reset"
+                        fi
+                fi
+        done
+        exit 0
+fi
+
+HASH=$1 ; shift
+if test "$HASH" = "-" ; then
+        HASH="HEAD"
+fi
+HASH=$(git rev-parse "$HASH")
+HASH_FILE="$IDS_PATH/$HASH"
+
+COMMENT="$@"
+
+# we work in the working dir
+go_to_git_case_work_dir
+
+git read-tree -i --reset "$GIT_CASE_HEAD"
+
+if test "$CMD" = "deleted" ; then
+        git update-index --remove "$HASH_FILE"
+
+else
+        add_file_to_index "$HASH_FILE" "$CMD"
+fi
+
+commit_index_and_update_branch "id '$HASH' $CMD on $CASE_ID
+ 
+$COMMENT" "-p $GIT_CASE_HEAD"
+
+
