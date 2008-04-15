@@ -39,5 +39,6 @@ else
         # for now we will only do aggressive merges
         git read-tree -m -i --aggressive "$GIT_CASE_HEAD" "$RBRANCH"
 
-        commit_index_and_update_branch "merged with $RBRANCH" "-p $GIT_CASE_HEAD"
+        #commit_index_and_update_branch "merged with $RBRANCH" "-p $GIT_CASE_HEAD"
+        die "sorry, this is broken."
 fi
