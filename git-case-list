@@ -9,8 +9,17 @@ source git-case-common
 git ls-tree cases -- . | while read mode type object file ; do
         if test $type = tree ; then
                 short=$(gen_short_case_id $file)
-                desc=$(git show cases:$file/description | head -n1)
-                state="["$(git show cases:$file/state)"]"
-                printf "%6s   %7s  %s\n" "$short" "$state" "$desc"
+                desc=$(git show cases:$file/description 2>/dev/null | head -n1)
+                ctype=$(git show "cases:$file/type" 2>/dev/null || true)
+                state=$(git show "cases:$file/state" 2>/dev/null || true)
+                assig=$(git show "cases:$file/assigned" 2>/dev/null || true)
+
+                mine=""
+                if test "$assig" = "$GIT_COMMITTER_NAME <$GIT_COMMITTER_EMAIL>" ; then
+                        mine="$bold$blue"
+                fi
+
+                state_type="[$state] [$ctype]"
+                printf "$mine%6s$reset  %-20s $mine%s$reset\n" "$short" "$state_type" "${desc:0:50}"
         fi
 done
