@@ -6,6 +6,8 @@
 
 source git-case-common
 
+ACTIVE_ID=$(cat "$GIT_CASE_ACTIVE" 2>/dev/null || true)
+
 git ls-tree cases -- . | while read mode type object file ; do
         if test $type = tree ; then
                 short=$(gen_short_case_id $file)
@@ -19,7 +21,12 @@ git ls-tree cases -- . | while read mode type object file ; do
                         mine="$bold$blue"
                 fi
 
+                cur="  "
+                if test "$file" = "$ACTIVE_ID" ; then
+                        cur="$bold$red**"
+                fi
+
                 state_type="[$state] [$ctype]"
-                printf "$mine%6s$reset  %-20s $mine%s$reset\n" "$short" "$state_type" "${desc:0:50}"
+                printf "$cur $mine%6s$reset  %-20s $mine%s$reset\n" "$short" "$state_type" "${desc:0:50}"
         fi
 done
