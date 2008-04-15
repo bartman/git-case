@@ -8,10 +8,30 @@
 source git-case-common
 
 DEFAULT="origin/$GIT_CASE_HEAD"
-BRANCH="${1:-$DEFAULT}"
+RBRANCH="${1:-$DEFAULT}"
+
+CURRENT_HEAD=$(git rev-parse "${GIT_CASE_HEAD}")
+test -z "$CURRENT_HEAD" && "cannot determine sha1 of $GIT_CASE_HEAD"
+
+REMOTE_HEAD=$(git rev-parse "${RBRANCH}")
+test -z "$REMOTE_HEAD" && "cannot determine sha1 of $RBRANCH"
 
 # we work in the working dir
 go_to_git_case_work_dir
 
-# for now we will only do aggressive merges
-git read-tree -m -i --aggressive "$GIT_CASE_HEAD" "$BRANCH"
+BASE=$(git-merge-base ${CURRENT_HEAD} ${REMOTE_HEAD})
+if test $BASE = $REMOTE_HEAD ; then
+        echo "Already upto date."
+        exit 0
+
+elif test $BASE = $CURRENT_HEAD ; then
+        echo "Performing fast-forward."
+	git-update-ref "refs/heads/$GIT_CASE_HEAD" "$REMOTE_HEAD" "$CURRENT_HEAD"
+
+else
+        echo "Merging."
+        # for now we will only do aggressive merges
+        git read-tree -m -i --aggressive "$GIT_CASE_HEAD" "$RBRANCH"
+
+        commit_index_and_update_branch "merged with $RBRANCH" "-p $GIT_CASE_HEAD"
+fi
