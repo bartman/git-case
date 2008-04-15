@@ -7,8 +7,12 @@
 
 source git-case-common
 
-ID=$(cat "$GIT_CASE_ACTIVE" 2>/dev/null || true)
-test -z "$ID" && die "no active case set"
+ID=$1
+if test -z "$ID" ; then
+        ID=$(cat "$GIT_CASE_ACTIVE" 2>/dev/null || true)
+        test -z "$ID" && die "no active case set"
+fi
+ID=$(git ls-tree cases | awk "/\<${ID}[a-fA-F0-9]*$/"'{ print $4 }')
 
 CASE_ROOT="cases:${ID}"
 
