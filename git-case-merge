@@ -10,11 +10,17 @@ source git-case-common
 DEFAULT="origin/$GIT_CASE_HEAD"
 RBRANCH="${1:-$DEFAULT}"
 
-CURRENT_HEAD=$(git rev-parse "${GIT_CASE_HEAD}")
-test -z "$CURRENT_HEAD" && "cannot determine sha1 of $GIT_CASE_HEAD"
-
-REMOTE_HEAD=$(git rev-parse "${RBRANCH}")
+REMOTE_HEAD=$(git rev-parse --revs-only "${RBRANCH}")
 test -z "$REMOTE_HEAD" && "cannot determine sha1 of $RBRANCH"
+
+if test -z "$(git rev-parse --revs-only ${GIT_CASE_HEAD})" ; then
+        echo "Creating local branch ${GIT_CASE_HEAD} based on ${RBRANCH}"
+	git-update-ref "refs/heads/$GIT_CASE_HEAD" "$REMOTE_HEAD"
+        exit 0
+fi
+
+CURRENT_HEAD=$(git rev-parse --revs-only "${GIT_CASE_HEAD}")
+test -z "$CURRENT_HEAD" && "cannot determine sha1 of $GIT_CASE_HEAD"
 
 # we work in the working dir
 go_to_git_case_work_dir
