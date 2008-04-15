@@ -1,0 +1,47 @@
+#!/bin/bash
+#
+# Assumptions:
+#  - in a git repository
+#  - we can access git-case-common
+#  - the branch defined by GIT_CASE_HEAD exists (see git-case-common)
+
+source git-case-common
+
+ID=$(cat "$GIT_CASE_ACTIVE" 2>/dev/null || true)
+test -z "$ID" && die "no active case set"
+
+# we work in the working dir
+go_to_git_case_work_dir
+
+DESC_FILE="$ID/description"
+TEMP_FILE=$(mktemp -p "$GIT_CASE_WORK_DIR")
+OLD=$(git show "cases:$DESC_FILE")
+
+cat <<END > "$TEMP_FILE"
+${OLD}
+# Edit the description for case $(gen_short_case_id $ID) above.
+# Lines starting with '#' character are ignored.
+# To cancel out of an edit, save an empty line.
+END
+
+vim $TEMP_FILE
+
+NEW=$(grep -v ^# "$TEMP_FILE")
+
+test -z "$NEW" && die "Refusing to use an empty line as description."
+test -z "$NEW" && die "Refusing to use an empty line as description."
+
+if test "$OLD" = "$NEW" ; then
+        echo "No changes made." >&2
+        exit 0
+fi
+
+git read-tree -i --reset "$GIT_CASE_HEAD"
+
+add_file_to_index "$DESC_FILE" "$NEW"
+
+commit_index_and_update_branch "description changed for case ${ID:0:6}
+ 
+was: $OLD
+new: $NEW" "-p $GIT_CASE_HEAD"
+
