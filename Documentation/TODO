@@ -24,7 +24,6 @@ Please note that this file uses Markdown notation.
 
  - **bartman to** complete these prototypes:
    - git-case-grep [–[desc|comment|field|mark]=<text> ...] [<text>]
-   - git-case-state [<id>] <state> <comment message>
    - git-case-ids [-c] [<id>]
    - git-case-good [[<id>] <commitish>]
    - git-case-bad [[<id>] <commitish>]
