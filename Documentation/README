@@ -10,10 +10,10 @@ Please note that this file uses Markdown notation.
 
 Few points about implementation...
 
- * code uses .git/case/index for temporary index
+ * code uses .git/case/tmp-$$/index for temporary index
  * code uses .git/case/active for current case
- * code uses .git/case/tmp/ for temporary scratch space
  * code uses 'cases' branch to create history for cases
+ * there are no other temporary files created (anymore)
 
 ## Datastore
 

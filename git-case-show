@@ -15,17 +15,19 @@ CASE_ROOT="cases:${ID}"
 desc=$(git show "$CASE_ROOT/description" 2>/dev/null || true)
 test -z "$desc" && die "active case is not valid"
 
+cdate=$(git show "$CASE_ROOT/created" 2>/dev/null || true)
 ctype=$(git show "$CASE_ROOT/type" 2>/dev/null || true)
 state=$(git show "$CASE_ROOT/state" 2>/dev/null || true)
 found=$(git show "$CASE_ROOT/found" 2>/dev/null || true)
 
 found=$(git log -1 --pretty=oneline --abbrev-commit "$found" || echo "$found")
 
-echo "Case ID:     ${ID:0:6} ($ID)"
-echo "Description: $desc"
-echo "Type:        $ctype"
-echo "State:       $state"
-echo "Found in:    $found"
+echo -e "Case ID:     $bold$blue${ID:0:6}$reset ($white$ID$reset)"
+echo -e "Description: $yellow$desc$reset"
+echo    "Created on:  $cdate"
+echo    "Type:        $ctype"
+echo    "State:       $state"
+echo    "Found in:    $found"
 
 MARKS=$(git ls-tree cases "$ID/marks/" | awk -F/ '{ print $3 }' | xargs)
 test -n "$MARKS" && echo "Marks:       $MARKS"

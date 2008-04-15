@@ -29,6 +29,8 @@ Please note that this file uses Markdown notation.
    - git-case-good [[<id>] <commitish>]
    - git-case-bad [[<id>] <commitish>]
  - make access to .git/case/ work for concurrent users
+   - use a lock file to make the commit
+   - use git-update-ref instead of 'echo $ref > .git/refs/heads/cases'
 
 
 

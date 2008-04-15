@@ -59,6 +59,25 @@ export GIT_CASE_INDEX="$GIT_CASE_WORK_DIR/index"
 export GIT_INDEX_FILE="$GIT_CASE_INDEX"
 
 # ------------------------------------------------------------------------
+# colours are pretty
+
+black='\E[30;40m'
+red='\E[31;40m'
+green='\E[32;40m'
+yellow='\E[33;40m'
+blue='\E[34;40m'
+magenta='\E[35;40m'
+cyan='\E[36;40m'
+white='\E[37;40m'
+
+reset='\e[m'
+bold='\e[1m'
+underline='\e[4m'
+blink='\e[5m'
+inverse='\e[7m'
+
+# ------------------------------------------------------------------------
+# helper functions
 
 function go_to_git_case_work_dir() {
         test -d "$GIT_CASE_WORK_DIR" && die "stale $GIT_CASE_WORK_DIR already exists"
