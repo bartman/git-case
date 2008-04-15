@@ -22,11 +22,16 @@ Please note that this file uses Markdown notation.
 
 ### Outstanding tasks:
 
- - **bartman to** complete these prototypes:
+ - complete these prototypes:
    - git-case-grep [–[desc|comment|field|mark]=<text> ...] [<text>]
  - make access to .git/case/ work for concurrent users
    - use a lock file to make the commit
-   - use git-update-ref instead of 'echo $ref > .git/refs/heads/cases'
+ - **bartman to** work on remote linkage
+   - `git-case-merge [ -r <remote> | <branch> ]` to merge cases from a
+     remote or branch
+   - `git-case-pull <remote>` to fetch/merge cases from a remote
+   - post fetch hook that merges in the cases obtained from remote if
+     some magic configuration is set to do so automatically
 
 
 
