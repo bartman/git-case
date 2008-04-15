@@ -31,6 +31,9 @@ mine=""
 if test "$assig" = "$GIT_COMMITTER_NAME <$GIT_COMMITTER_EMAIL>" \
                 -o "$assig" = "$GIT_COMMITTER_EMAIL" ; then
         mine="$bold$blue"
+elif test -z "$assig" ; then
+        mine="$bold$black"
+        assig="(nobody)"
 fi
 
 echo -e "Case ID:     $bold$blue${ID:0:6}$reset ($white$ID$reset)"

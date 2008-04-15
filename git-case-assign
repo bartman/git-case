@@ -11,9 +11,12 @@ ID=$(cat "$GIT_CASE_ACTIVE" 2>/dev/null || true)
 test -z "$ID" && die "no active case set"
 ASSIGNED_FILE="$ID/assigned"
 
-WHO="$1"
-if test -z "$WHO" ; then
+if test "${#@}" = 0 ; then
         exec git show "cases:$ASSIGNED_FILE"
+fi
+
+if test "$WHO" = "--me" ; then
+        WHO="$GIT_COMMITTER_NAME <$GIT_COMMITTER_EMAIL>"
 fi
 
 # we work in the working dir
