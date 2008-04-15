@@ -111,7 +111,7 @@ function add_file_to_index() {
 		FEED="echo '$CONTENTS' |"
 	fi
 
-	local cmd="$FEED git-hash-object -t blob -w --stdin"
+	local cmd="$FEED git hash-object -t blob -w --stdin"
 	local FILE_ID=$(eval $cmd)
 	git update-index --add --cacheinfo 100644 "$FILE_ID" "$FILE_NAME"
 }

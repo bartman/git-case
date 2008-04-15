@@ -15,13 +15,13 @@ CASE_ID=$(generate_case_id "$DESCRIPTION")
 go_to_git_case_work_dir
 
 COMMIT_PARENT_ARGS=
-if test -n "$(git-rev-parse --revs-only ${GIT_CASE_HEAD})" ; then
+if test -n "$(git rev-parse --revs-only ${GIT_CASE_HEAD})" ; then
         # already initialized, reset index to last commit
         git read-tree -i --reset "$GIT_CASE_HEAD"
         COMMIT_PARENT_ARGS="-p $GIT_CASE_HEAD"
 else
         # reset the cache
-        git read-tree -i --reset $(printf '' | git-write-tree)
+        git read-tree -i --reset $(printf '' | git write-tree)
 fi
 
 # build the tree
