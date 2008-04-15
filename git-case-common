@@ -27,10 +27,10 @@ test -z "$GIT_COMMITTER_NAME" \
 LOCAL_GIT_VERSION=$(git version)
 LOCAL_GIT_VERSION=${LOCAL_GIT_VERSION##* }
 
-# we expect 1.5.5 or better
+# we expect 1.5.3 or better
 echo "${LOCAL_GIT_VERSION}" | tr '.' ' ' \
 | ( read major minor patch rest ; \
-    test "$major" -gt 1 -o "$minor" -gt 5 -o "$patch" -ge 5 ) \
+    test "$major" -gt 1 -o "$minor" -gt 5 -o "$patch" -ge 3 ) \
     || die "we need git 1.5.5 or better"
 
 # ------------------------------------------------------------------------
