@@ -26,7 +26,7 @@ END
 
 vim $TEMP_FILE
 
-NEW=$(cat "$TEMP_FILE")
+NEW=$(grep -v ^# "$TEMP_FILE")
 
 test -z "$NEW" && die "Refusing to use an empty line as description."
 test -z "$NEW" && die "Refusing to use an empty line as description."
