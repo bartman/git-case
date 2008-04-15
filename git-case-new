@@ -28,7 +28,7 @@ fi
 add_file_to_index "$CASE_ID/description" "$DESCRIPTION"
 add_file_to_index "$CASE_ID/type"        "bug"
 add_file_to_index "$CASE_ID/state"       "new"
-add_file_to_index "$CASE_ID/assigned"    "$GIT_COMMITTER_NAME <$GIT_COMMITTER_EMAIL>"
+echo "$GIT_COMMITTER_NAME <$GIT_COMMITTER_EMAIL>" | add_file_to_index "$CASE_ID/assigned"
 
 git rev-parse HEAD | add_file_to_index "$CASE_ID/found"
 date               | add_file_to_index "$CASE_ID/created"
