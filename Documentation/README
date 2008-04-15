@@ -41,6 +41,26 @@ the case creates a new commit on the 'cases' branch.
 
 There is a bit more information on the wiki page, see below.
 
+# getting started
+
+You need to setup your repository to be able to push and pull cases.
+
+Here is what your .git/config should look like:
+
+    [remote "origin"]
+            url = tachyon.jukie.net:/home/git/git-case.git
+            fetch = +refs/heads/*:refs/remotes/origin/*
+            push = master:refs/heads/master
+            push = cases:refs/heads/cases
+
+There is no automation right now.  Each time you fetch/pull from the
+repo you will have to merge your cases in manually.
+
+    # ./git-case-merge
+
+That includes the first time when you don't yet have a cases branch.
+Let me know what happens if you already had a cases branch :)
+
 # Completed commands
 
 ## creating new cases
@@ -93,6 +113,28 @@ There is a bit more information on the wiki page, see below.
         
         Attachment: file-name 16b14f5da9e2fcd6f3f38cc9e584cef2f3c90ebe
 
+## changing state
+
+    # ./git-case-state
+    new
+    # ./git-case-state old
+    # ./git-case-state
+    old
+
+## changing type
+
+    # ./git-case-type
+    bug
+    # ./git-case-type feature
+    # ./git-case-type
+    feature
+
+## assigning
+
+    # ./git-case-assign dmo@dmo.ca
+    # ./git-case-assign
+    dmo@dmo.ca
+
 ## setting and clearing marks
 
     # ./git-case-mark fixme
@@ -104,14 +146,6 @@ There is a bit more information on the wiki page, see below.
     # ./git-case-field variable
     value
     # ./git-case-field -d variable
-
-## changing state
-
-    # ./git-case-state
-    new
-    # ./git-case-state old
-    # ./git-case-state
-    old
 
 ## adding good/bad ids
 
