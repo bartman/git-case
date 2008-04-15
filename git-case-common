@@ -48,10 +48,10 @@ export GIT_DIR
 export GIT_CASE_HEAD="cases"
 
 export GIT_CASE_DIR="$GIT_DIR/case"
-export GIT_CASE_WORK_DIR="$GIT_CASE_DIR/tmp"
+export GIT_CASE_WORK_DIR="$GIT_CASE_DIR/tmp-$$"
 export GIT_CASE_ACTIVE="$GIT_CASE_DIR/active"
 
-export GIT_CASE_INDEX="$GIT_CASE_DIR/index"
+export GIT_CASE_INDEX="$GIT_CASE_WORK_DIR/index"
 
 # ------------------------------------------------------------------------
 # prepare the redirection
