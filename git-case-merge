@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+# Assumptions:
+#  - in a git repository
+#  - we can access git-case-common
+#  - the branch defined by GIT_CASE_HEAD exists (see git-case-common)
+
+source git-case-common
+
+DEFAULT="origin/$GIT_CASE_HEAD"
+BRANCH="${1:-$DEFAULT}"
+
+# we work in the working dir
+go_to_git_case_work_dir
+
+# for now we will only do aggressive merges
+git read-tree -m -i --aggressive "$GIT_CASE_HEAD" "$BRANCH"
