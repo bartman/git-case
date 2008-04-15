@@ -28,7 +28,8 @@ found=$(git show "$CASE_ROOT/found" 2>/dev/null || true)
 found=$(git log -1 --pretty=oneline --abbrev-commit "$found" || echo "$found")
 
 mine=""
-if test "$assig" = "$GIT_COMMITTER_NAME <$GIT_COMMITTER_EMAIL>" ; then
+if test "$assig" = "$GIT_COMMITTER_NAME <$GIT_COMMITTER_EMAIL>" \
+                -o "$assig" = "$GIT_COMMITTER_EMAIL" ; then
         mine="$bold$blue"
 fi
 
