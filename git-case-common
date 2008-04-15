@@ -127,8 +127,6 @@ function commit_index_and_update_branch() {
         test -z "$COMMIT" && die "failed to create commit"
 
 	git-update-ref "refs/heads/$GIT_CASE_HEAD" "$COMMIT"
-
-	echo "$COMMIT"
 }
 
 function gen_short_case_id() {

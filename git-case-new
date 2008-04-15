@@ -35,3 +35,4 @@ date               | add_file_to_index "$CASE_ID/created"
 
 commit_index_and_update_branch "$DESCRIPTION" "$COMMIT_PARENT_ARGS"
 
+echo -e "New case $yellow${CASE_ID:0:6}$reset created."
