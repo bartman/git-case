@@ -107,6 +107,14 @@ There is a bit more information on the wiki page, see below.
     value
     # ./git-case-field -d variable
 
+## changing state
+
+    # ./git-case-state
+    new
+    # ./git-case-state old
+    # ./git-case-state
+    old
+
 # References:
 
   Wiki:        http://www.jukie.net/~bart/kwiki/index.cgi?GitBugTracker
