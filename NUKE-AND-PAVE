@@ -1,0 +1,4 @@
+#!/bin/bash
+
+rm -rf .git/case
+git branch -D cases

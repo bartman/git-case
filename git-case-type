@@ -1,0 +1,26 @@
+#!/bin/bash
+#
+# Assumptions:
+#  - in a git repository
+#  - we can access git-case-common
+#  - the branch defined by GIT_CASE_HEAD exists (see git-case-common)
+
+source git-case-common
+
+ID=$(cat "$GIT_CASE_ACTIVE" 2>/dev/null || true)
+test -z "$ID" && die "no active case set"
+TYPE_FILE="$ID/type"
+
+VALUE="$1"
+if test -z "$VALUE" ; then
+        exec git show "cases:$TYPE_FILE"
+fi
+
+# we work in the working dir
+go_to_git_case_work_dir
+
+git read-tree -i --reset "$GIT_CASE_HEAD"
+
+add_file_to_index "$TYPE_FILE" "$VALUE"
+
+commit_index_and_update_branch "type changed to '$VALUE' on $ID" "-p $GIT_CASE_HEAD"
