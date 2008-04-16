@@ -1,0 +1,136 @@
+# Abstract
+
+Comments will be stored in `cases:<caseid>/comments/<commentid>`, they
+will likely resemble emails, they will be threaded.
+
+# Suggested approach
+
+Mailing lists are a natural way of comunicating.  The comments will be
+viewed as email.  They will be linked in a tree structure based on the
+reply-to relationship.
+
+ - comments are email
+   * comments can originate from email, and are sent out as email; for
+     all intents and purposes, comments are email.
+   * RFC2822 header/body
+
+ - comments have attributes (header fields)
+   * manditory attributes
+     - Date: when it was created
+     - From: author of comment
+   * attriubtes for comments originated from emails, taken verbatim
+     - To: email
+     - Cc: email
+     - Subject: text
+     - Message-Id: messageid
+     - In-Reply-To: messageid
+     - References: one or more messageid's
+   * attributes to handle attachments:
+     - Attachment-Id: sha1 references of objects in git data store
+
+*NOTE* `Attachment-Id` is not transfered via email, it is MIME encoded
+and attached to the email that is exported.
+
+# The naive comment storage
+
+We want the comments to form a threaded discussion, like on mailing
+lists.  On mailing lists, the threaded is dictated by `In-Reply-To` and
+`References` header fields.  In a git store the natural way to reference
+a comment would be to access it by it's hash.
+
+## first comment
+
+A comment could look like this:
+
+    Date: Tue Apr 15 20:26:18 2008 -0400
+    From: fred@example.com
+    
+    Comments need to be threaded.
+
+The naive suggested path format for comments would be:
+
+    cases:<caseid>/comments/<commentid>
+
+Where the `commentid` is just the hashed contents of the fully assembled
+comment.  The hash is `2e122df60a36e37bfde941cdaf1d073f1624b70b`, and
+the comment would thus be stored in
+
+    cases:<caseid>/comments/2e122d...
+
+## what about replies
+
+Later, the comment is shipped out by the server to all the recipiants of
+the `bugs@example.com` mailing list.  The message is given a
+`Message-Id` that relates it back to the comment... that id is based on
+the comment's sha1.
+
+Then, Bob replies:
+
+    Date: Tue Apr 15 20:26:18 2008 -0400
+    From: bob@example.com
+    To: bugs@example.com
+    In-Reply-To: <2e122d...@bugs.example.com>
+    Message-Id: <SOMETHING-002@bugs.example.com>
+    Subject: Re: [BUG abcdef] we love comments
+    
+    Fred, sure... as long as they have valid references.
+
+The sha1 of which is `df1c46f090d48be648d613f5575c37ed7123d39e`.
+
+With the naive store we will put this comments in:
+
+    cases:<caseid>/comments/df1c46...
+
+# the problme with naive comment storage
+
+We now have a problem: we have to read all comments when we want to
+display a threaded list.  That is because we need to pull out the
+`Message-Id` and the `In-Reply-To` header fields in order to construct
+the graph.  This is going to be very inefficient.
+
+Here are some proposed alternatives:
+
+## cached index of comment relationships
+
+This could be stored either in a file that gets updated (locally) when
+comments change for a case.  It would speed up subsequent displays of
+comments.
+
+Stored in `.git/case/comment-index-<caseid>` and contains a binary fine
+containing a structure that can be traversed in date order or (with
+another set of links) by threaded relationships.  The data at each link
+would be the sha1 sum to follow to get to the comment.
+
+## index comments by message-id
+
+We know that comments are obtainable from git by thier sha1.  So knowing
+the sha1 can give us the contents of the comment without parsing the
+cases tree.  Just use `git cat-file blob <commentid>`.
+
+We can store the comments in the tree with:
+
+    cases:<caseid>/comments/<messageid>
+
+Where the `messageid` is obtained from the email for remotely created
+comments, or taked from a combination of `commentid` and the hostname
+for locally created comments.
+
+Ther is still a minor problem with this.  We cannot trust the remote to
+generate two messages with unique `commentid`s, but we want to git-case
+systems to hash those comments down to the same ID.
+
+It might be better then to store the comment in the tree as:
+
+    cases:<caseid>/comments/<messageid>/<commentid>
+
+It is now possible to handle two messages sent out by a crappy MTA with
+the same `Message-Id`, but different contents.  And store both.
+
+
+
+
+
+
+
+
+vim: set ts=8 et sw=8 tw=72 ft=mkd
