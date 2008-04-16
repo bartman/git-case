@@ -4,7 +4,7 @@
 #  - in a git repository
 #  - the branch defined by GIT_CASE_HEAD exists (see git-case-common)
 
-source git-case-common
+source $(dirname $0)/git-case-common
 
 ACTIVE_ID=$(cat "$GIT_CASE_ACTIVE" 2>/dev/null || true)
 

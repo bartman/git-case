@@ -5,7 +5,7 @@
 #  - we can access git-case-common
 #  - the branch defined by GIT_CASE_HEAD exists (see git-case-common)
 
-source git-case-common
+source $(dirname $0)/git-case-common
 
 DEFAULT="origin/$GIT_CASE_HEAD"
 RBRANCH="${1:-$DEFAULT}"

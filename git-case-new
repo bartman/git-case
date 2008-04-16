@@ -4,7 +4,7 @@
 #  - in a git repository
 #  - we can access git-case-common
 
-source git-case-common
+source $(dirname $0)/git-case-common
 
 test -z "$1" -o "$1" = "-h" \
 && die "$0 [--me | --assign=<who>] 

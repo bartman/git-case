@@ -5,7 +5,7 @@
 #  - we can access git-case-common
 #  - the branch defined by GIT_CASE_HEAD exists (see git-case-common)
 
-source git-case-common
+source $(dirname $0)/git-case-common
 
 ID=$(cat "$GIT_CASE_ACTIVE" 2>/dev/null || true)
 test -z "$ID" && die "no active case set"
