@@ -32,17 +32,18 @@ echo "$FIELD" | grep -q '^[a-zA-Z0-9][a-zA-Z0-9._-]*$' || die "format of field '
 
 ID=$(cat "$GIT_CASE_ACTIVE" 2>/dev/null || true)
 test -z "$ID" && die "no active case set"
+shortID=$(gen_short_case_id "$ID")
 
 FIELD_FILE="$ID/fields/$FIELD"
 
 count=$(git ls-tree cases "$FIELD_FILE" | wc -l)
 if test "$action" = "removed" -a "$count" -ne "1" ; then
-        die "no field '$FIELD' set on case ${ID:0:6}"
+        die "no field '$FIELD' set on case $shortID"
 fi
 
 # handle read first
 if test "$action" = "read" ; then
-        test "$count" -ne "1" && die "no field '$FIELD' set on case ${ID:0:6}"
+        test "$count" -ne "1" && die "no field '$FIELD' set on case $shortID"
 
         exec git show "cases:$FIELD_FILE"
 fi

@@ -10,6 +10,7 @@ DESCRIPTION=$@
 test -z "$DESCRIPTION" && die "$0 <description>"
 
 CASE_ID=$(generate_case_id "$DESCRIPTION")
+shortID=$(gen_short_case_id "$CASE_ID")
 
 # we work in the working dir
 go_to_git_case_work_dir
@@ -35,4 +36,4 @@ date               | add_file_to_index "$CASE_ID/created"
 
 commit_index_and_update_branch "$DESCRIPTION" "$COMMIT_PARENT_ARGS"
 
-echo -e "New case $yellow${CASE_ID:0:6}$reset created."
+echo -e "New case $yellow$shortID$reset created."

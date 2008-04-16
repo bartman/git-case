@@ -20,15 +20,16 @@ echo "$MARK" | grep -q '^[a-zA-Z0-9][a-zA-Z0-9._-]*$' || die "format of mark '$M
 
 ID=$(cat "$GIT_CASE_ACTIVE" 2>/dev/null || true)
 test -z "$ID" && die "no active case set"
+shortID=$(gen_short_case_id "$ID")
 
 MARK_FILE="$ID/marks/$MARK"
 
 count=$(git ls-tree cases "$MARK_FILE" | wc -l)
 if test "$action" = "set" -a "$count" -ne "0" ; then
-        die "mark '$MARK' already set on case ${ID:0:6}"
+        die "mark '$MARK' already set on case $shortID"
 fi
 if test "$action" = "removed" -a "$count" -ne "1" ; then
-        die "no mark '$MARK' set on case ${ID:0:6}"
+        die "no mark '$MARK' set on case $shortID"
 fi
 
 # we work in the working dir

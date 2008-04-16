@@ -47,6 +47,8 @@ elif ! ( echo "$WHO" | grep -q "@" ) ; then
         die "new assignee '$WHO' does not look like an email address"
 fi
 
+shortID=$(gen_short_case_id "$ID")
+
 # we work in the working dir
 go_to_git_case_work_dir
 
@@ -54,4 +56,4 @@ git read-tree -i --reset "$GIT_CASE_HEAD"
 
 add_file_to_index "$ASSIGNED_FILE" "$WHO"
 
-commit_index_and_update_branch "${ID:0:6} assigned to '$WHO'" "-p $GIT_CASE_HEAD"
+commit_index_and_update_branch "$shortID assigned to '$WHO'" "-p $GIT_CASE_HEAD"

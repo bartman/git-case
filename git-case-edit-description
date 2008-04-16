@@ -9,6 +9,7 @@ source git-case-common
 
 ID=$(cat "$GIT_CASE_ACTIVE" 2>/dev/null || true)
 test -z "$ID" && die "no active case set"
+shortID=$(gen_short_case_id "$ID")
 
 # we work in the working dir
 go_to_git_case_work_dir
@@ -40,7 +41,7 @@ git read-tree -i --reset "$GIT_CASE_HEAD"
 
 add_file_to_index "$DESC_FILE" "$NEW"
 
-commit_index_and_update_branch "description changed for case ${ID:0:6}
+commit_index_and_update_branch "description changed for case $shortID
  
 was: $OLD
 new: $NEW" "-p $GIT_CASE_HEAD"

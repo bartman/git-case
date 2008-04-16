@@ -13,6 +13,7 @@ if test -z "$ID" ; then
         test -z "$ID" && die "no active case set"
 fi
 ID=$(git ls-tree cases | awk "/\<${ID}[a-fA-F0-9]*$/"'{ print $4 }')
+shortID=$(gen_short_case_id "$ID")
 
 CASE_ROOT="cases:${ID}"
 
@@ -36,7 +37,7 @@ elif test -z "$assig" ; then
         assig="(nobody)"
 fi
 
-echo -e "Case ID:     $bold$blue${ID:0:6}$reset ($white$ID$reset)"
+echo -e "Case ID:     $bold$blue$shortID$reset ($white$ID$reset)"
 echo -e "Description: $yellow$desc$reset"
 echo    "Created on:  $cdate"
 echo    "Type:        $ctype"
