@@ -7,25 +7,44 @@
 
 source git-case-common
 
-ID=$(cat "$GIT_CASE_ACTIVE" 2>/dev/null || true)
-test -z "$ID" && die "no active case set"
+function usage() {
+        OUT=$1
+        $OUT -e "Usage: $0 [ [<caseid>] <user> ]
+        User set to 'me' expands to you."
+        exit 0
+}
+test "$1" = "-h" && usage echo
+
+# argument form is:
+# git case assign                - display who the active case is assigned to
+# git case assign foo@bar        - assign the active case to foo@bar
+# git case assign caseid foo@bar - assign the caseid case to foo@bar
+case "${#@}" in
+        0|1)    ID=$(cat "$GIT_CASE_ACTIVE" 2>/dev/null || true)
+                test -z "$ID" && die "no active case set"
+                ;;
+        2)      ID="$1"
+                ID=$(git ls-tree cases | awk "/\<${ID}[a-fA-F0-9]*$/"'{ print $4 }')
+                shift
+                ;;
+        *)      usage die
+                ;;
+esac
+
 ASSIGNED_FILE="$ID/assigned"
 
 case "${#@}" in
-        0)      exec git show "cases:$ASSIGNED_FILE"
-                ;;
         1)      WHO="$1"
                 ;;
-        2)      ID="$1"
-                WHO="$2"
+        *)      exec git show "cases:$ASSIGNED_FILE"
                 ;;
-        *)
-                echo "Usage: $0 [caseid] user"
-                exit -1
 esac
 
-if test "$WHO" = "--me" ; then
+if test "$WHO" = "me" ; then
         WHO="$GIT_COMMITTER_NAME <$GIT_COMMITTER_EMAIL>"
+
+elif ! ( echo "$WHO" | grep -q "@" ) ; then
+        die "new assignee '$WHO' does not look like an email address"
 fi
 
 # we work in the working dir
