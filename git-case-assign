@@ -10,7 +10,7 @@ source $(dirname $0)/git-case-common
 function usage() {
         OUT=$1
         $OUT -e "Usage: $0 [ [<caseid>] <user> ]
-        User set to 'me' expands to you."
+        User set to 'me' expands to you; sets to 'none' sets to no one."
         exit 0
 }
 test "$1" = "-h" && usage echo
@@ -42,6 +42,9 @@ esac
 
 if test "$WHO" = "me" ; then
         WHO="$GIT_COMMITTER_NAME <$GIT_COMMITTER_EMAIL>"
+
+elif test "$WHO" = "none" ; then
+        WHO=
 
 elif ! ( echo "$WHO" | grep -q "@" ) ; then
         die "new assignee '$WHO' does not look like an email address"
