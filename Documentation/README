@@ -21,23 +21,29 @@ In the 'cases' branch, git-case stores each case in it's own directory.
 The directory contains all information about the case.  Each change to
 the case creates a new commit on the 'cases' branch.
 
-    <id>/               # directory per case
-    |-- description     # 1st line title, then free form description
-    |-- type            # bug/feature/question/...
-    |-- found           # git commit worktree was in when case created RO
-    |-- state           # new/open/invalid/etc
-    |-- assigned        # name <email>
-    |-- marks/          # list of marks - tags in most tracker talk
-    |   `-- <name>      # empty file
-    |-- comments/       # comments, one per file
-    |   `-- <sha1>      # contains arbitrary text
-    |-- files/          # attachements to the case/comment
-    |   `-- <filename>/ # the name of the dir is actually the name of the file
-    |       `-- <sha1>  # hash of the file, contais the file
-    |-- ids/            # commits for which the state of thsi bug is known
-    |   `-- <sha1>      # file contains either 'good' or 'bad'
-    `-- fields/         # additional fields
-        `-- <name>      # contains one line of text
+    <id>/                   # directory per case
+    |-- description         # 1st line title, then free form description
+    |-- type                # bug/feature/question/...
+    |-- found               # git commit worktree was in when case created RO
+    |-- state               # new/open/invalid/etc
+    |-- assigned            # name <email>
+    |-- marks/              # list of marks - tags in most tracker talk
+    |   `-- <name>          # empty file
+    |-- comments/           # comments, one per file
+    |   |-- <sha1>          # contains arbitrary text
+    |   |-- by-message-id   # comments indexed by message-id
+    |   |   `-- <mid>       # message id from email
+    |   |       `-- <sha1>  # hash of the comment, empty file
+    |   |-- by-timestamp    # comments indexed by timestamp
+    |       `-- <timestamp> # timestamp from email
+    |           `-- <sha1>  # hash of the comment, empty file
+    |-- files/              # attachements to the case/comment
+    |   `-- <filename>/     # the name of the dir is actually the name of the file
+    |       `-- <sha1>      # hash of the file, contais the file
+    |-- ids/                # commits for which the state of thsi bug is known
+    |   `-- <sha1>          # file contains either 'good' or 'bad'
+    `-- fields/             # additional fields
+        `-- <name>          # contains one line of text
 
 There is a bit more information on the wiki page, see below.
 
@@ -60,6 +66,17 @@ repo you will have to merge your cases in manually.
 
 That includes the first time when you don't yet have a cases branch.
 Let me know what happens if you already had a cases branch :)
+
+## handy aliases
+
+I checked out git-case to `$GIT_CASE_DIR` and have this alias in my
+`$HOME/.gitconfig`:
+
+    case = !sh -c 'exec $GIT_CASE_DIR/git-case/git-case.git/git-case-$0 ${0+"$@"}'
+
+Which allows me to run commands more naturally:
+
+    git case <cmd> <options>
 
 # Completed commands
 
@@ -89,29 +106,41 @@ Let me know what happens if you already had a cases branch :)
 
 ## commenting
 
-    # ./git-case-comment some text goes here
+    # echo some text goes here | ./git-case-comment --stdin
 
-## attaching a file while commenting
+If text is not provided, an vim will be invoked
 
-    # ./git-case-attach file-name some text to describe it
+    # ./git-case-comment
+
+You can also add attachments
+
+    # ./git-case-comment --attach file.foo
 
 ## displaying a case
 
     # ./git-case-show
-    Case ID:     c11bce (c11bcecc97b0cd1a7e5bc420890b6b20c7fe2132)
-    Description: this is the third bug
-    Type:        bug
-    State:       new
-    Found in:    91ec508... remove the prefix to git-case-active query
+    Case ID:     77d673 (77d673c60bd046f63fe8eeabbbb0ad228341fcb2)
+    Description: improve comment storage
+    Created on:  Wed Apr 16 11:49:04 EDT 2008
+    Type:        feature
+    State:       closed
+    Assigned to: (nobody)
+    Found in:    3d7686c... agruments for git-case-new
 
     Comments...
-      20080413-205926.668903871
-        some text goes here
+      1946751edcfdbb2013d8438da6ae4542325c5c94
+          Date: Thu, 17 Apr 2008 09:51:56 -0400
+          From: Bart Trojanowski <bart@jukie.net>
+          
+          adding timestamp and message-id indexes, and storing comments by their hashes
 
-      20080413-205939.925596271
-        some text to describe it
-        
-        Attachment: file-name 16b14f5da9e2fcd6f3f38cc9e584cef2f3c90ebe
+      6ff6cc6ea822b06e7295c44eb03ffafdbc95aa9d
+          Date: Thu, 17 Apr 2008 10:27:21 -0400
+          From: Bart Trojanowski <bart@jukie.net>
+          Attachment: 73fca13fc8d143c4ef67d16a7be5a6c3d84c97bc attach
+          
+          test
+
 
 ## changing state
 
