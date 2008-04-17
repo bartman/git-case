@@ -5,7 +5,7 @@ will likely resemble emails, they will be threaded.
 
 # Suggested approach
 
-Mailing lists are a natural way of comunicating.  The comments will be
+Mailing lists are a natural way of communicating.  The comments will be
 viewed as email.  They will be linked in a tree structure based on the
 reply-to relationship.
 
@@ -15,10 +15,10 @@ reply-to relationship.
    * RFC2822 header/body
 
  - comments have attributes (header fields)
-   * manditory attributes
+   * mandatory attributes
      - Date: when it was created
      - From: author of comment
-   * attriubtes for comments originated from emails, taken verbatim
+   * attributes for comments originated from emails, taken verbatim
      - To: email
      - Cc: email
      - Subject: text
@@ -59,7 +59,7 @@ the comment would thus be stored in
 
 ## what about replies
 
-Later, the comment is shipped out by the server to all the recipiants of
+Later, the comment is shipped out by the server to all the recipients of
 the `bugs@example.com` mailing list.  The message is given a
 `Message-Id` that relates it back to the comment... that id is based on
 the comment's sha1.
@@ -81,7 +81,7 @@ With the naive store we will put this comments in:
 
     cases:<caseid>/comments/df1c46...
 
-# the problme with naive comment storage
+# the problem with naive comment storage
 
 We now have a problem: we have to read all comments when we want to
 display a threaded list.  That is because we need to pull out the
@@ -103,7 +103,7 @@ would be the sha1 sum to follow to get to the comment.
 
 ## index comments by message-id
 
-We know that comments are obtainable from git by thier sha1.  So knowing
+We know that comments are obtainable from git by their sha1.  So knowing
 the sha1 can give us the contents of the comment without parsing the
 cases tree.  Just use `git cat-file blob <commentid>`.
 
@@ -112,10 +112,10 @@ We can store the comments in the tree with:
     cases:<caseid>/comments/<messageid>
 
 Where the `messageid` is obtained from the email for remotely created
-comments, or taked from a combination of `commentid` and the hostname
+comments, or taken from a combination of `commentid` and the hostname
 for locally created comments.
 
-Ther is still a minor problem with this.  We cannot trust the remote to
+There is still a minor problem with this.  We cannot trust the remote to
 generate two messages with unique `commentid`s, but we want to git-case
 systems to hash those comments down to the same ID.
 
