@@ -33,6 +33,13 @@ echo "${LOCAL_GIT_VERSION}" | tr '.' ' ' \
     test "$major" -gt 1 -o "$minor" -gt 5 -o "$patch" -ge 3 ) \
     || die "we need git 1.5.5 or better"
 
+if ! ( echo $HOSTNAME | grep -q '.\..' ) ; then
+	export HOSTNAME=$(hostname --fqdn)
+fi
+echo $HOSTNAME | grep -q '.\..' \
+|| die "HOSTNAME '$HOSTNAME' is not a fully qualified comain name"
+
+
 # ------------------------------------------------------------------------
 # find the .git dir
 

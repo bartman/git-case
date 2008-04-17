@@ -5,43 +5,108 @@
 #  - we can access git-case-common
 #  - the branch defined by GIT_CASE_HEAD exists (see git-case-common)
 
+START_DIR=`pwd`
 source $(dirname $0)/git-case-common
 
-COMMENT="$@"
-test -z "$COMMENT" && die "$0 [--stdin | - | <text>]"
+test -z "$1" -o "$1" = "-h" && die "$0 [-a|--attach <file>] [-c|--stdin]"
 
 ID=$(cat "$GIT_CASE_ACTIVE" 2>/dev/null || true)
 test -z "$ID" && die "no active case set"
 
-COMMENT_NAME=$(date +%Y%m%d-%H%M%S.%N)
+COMMENT_BASE="$ID/comments"
+FILE_BASE="$ID/files"
 
 # we work in the working dir
 go_to_git_case_work_dir
 
-COMMENT_FILE=
-case "$COMMENT" in
-    --stdin)
-        COMMENT_FILTER=cat
-        COMMENT_FILE=/dev/stdin
-        ;;
-    -)
-        COMMENT_FILE=$(mktemp -p "$GIT_CASE_WORK_DIR")
-        cat <<END > "$COMMENT_FILE"
+COMMENT_FILE=$(mktemp -p "$GIT_CASE_WORK_DIR")
+touch "$COMMENT_FILE"
+DATE_2822=$(date -r "$COMMENT_FILE" --rfc-2822)
+TIMESTAMP=$(date -r "$COMMENT_FILE" "+%s")
+
+TEXT_FILE=
+TEXT_FILTER=cat
+declare -a ATTACH_NAMES
+declare -a ATTACH_FILES
+declare -a ATTACH_HASHES
+while test -n "$1" ; do
+        OPT="$1" ; shift
+        case "$OPT" in
+            -c|--stdin)
+                TEXT_FILE=$(mktemp -p "$GIT_CASE_WORK_DIR")
+                test -t 0 && echo "# type in your comment...">&2
+                cat > "$TEXT_FILE"
+                ;;
+            -a|--attach)
+                AFILE="$1" ; shift
+                ATTACH_NAMES[${#ATTACH_NAMES}]="$AFILE"
+                if test "${AFILE:0:1}" != '/' ; then
+                        AFILE="$START_DIR/$AFILE"
+                fi
+                test -f "$AFILE" || die "$0: '$AFILE' is not a valid file"
+                ATTACH_FILES[${#ATTACH_FILES}]="$AFILE"
+                ;;
+            *)
+                die "$0: unknown option, see -h"
+                ;;
+        esac
+done
+
+if ! test -f "$TEXT_FILE" ; then
+        shift
+        TEXT_FILE=$(mktemp -p "$GIT_CASE_WORK_DIR")
+        cat > "$TEXT_FILE" <<END
 
 # Type in a comment for case $(gen_short_case_id $ID) above.
 # Lines starting with '#' character are ignored.
 END
-        COMMENT_FILTER='grep -v ^#'
-        vim $COMMENT_FILE
-        ;;
-esac
+        vim $TEXT_FILE
+        TEXT_FILTER="grep -v ^#"
+fi
+
+if test "${#ATTACH_FILES}" -gt 0 ; then
+        for ((a=0;a<"${#ATTACH_FILES[@]}";a++)) ; do
+                AFILE="${ATTACH_FILES[$a]}"
+                AHASH=$(git hash-object -t blob -w --stdin < "$AFILE")
+                ATTACH_HASHES[$a]="$AHASH"
+        done
+fi
+
+(
+        echo "Date: $DATE_2822"
+        echo "From: $GIT_COMMITTER_NAME <$GIT_COMMITTER_EMAIL>"
+        if test "${#ATTACH_FILES}" -gt 0 ; then
+                for ((a=0;a<"${#ATTACH_FILES[@]}";a++)) ; do
+                        ANAME="${ATTACH_NAMES[$a]}"
+                        AHASH="${ATTACH_HASHES[$a]}"
+                        echo "Attachment: ${AHASH} ${ANAME}"
+                done
+        fi
+        echo ""
+        $TEXT_FILTER < "$TEXT_FILE"
+) > "$COMMENT_FILE"
 
 git read-tree -i --reset "$GIT_CASE_HEAD"
 
-if test -f "$COMMENT_FILE" ; then
-        $COMMENT_FILTER "$COMMENT_FILE" | add_file_to_index "$ID/comments/$COMMENT_NAME"
-else
-        add_file_to_index "$ID/comments/$COMMENT_NAME" "$COMMENT"
+# create the comment file
+COMMENT_HASH=$(git hash-object -t blob -w --stdin < "$COMMENT_FILE")
+git update-index --add --cacheinfo 100644 "$COMMENT_HASH" "$COMMENT_BASE/$COMMENT_HASH"
+
+# this is the message id
+MESSAGE_ID="git-case-comment-$COMMENT_HASH@$HOSTNAME"
+MESSAGE_ID=$(echo -n "$MESSAGE_ID" | tr -c 'A-Za-z0-9_.-' _)
+
+# and now the backwards links
+NULL_HASH=$(git hash-object -t blob -w --stdin < /dev/null)
+git update-index --add --cacheinfo 100644 "$NULL_HASH" "$COMMENT_BASE/by-message-id/$MESSAGE_ID/$COMMENT_HASH"
+git update-index --add --cacheinfo 100644 "$NULL_HASH" "$COMMENT_BASE/by-timestamp/$TIMESTAMP/$COMMENT_HASH"
+
+if test "${#ATTACH_FILES}" -gt 0 ; then
+        for ((a=0;a<"${#ATTACH_FILES[@]}";a++)) ; do
+                ANAME="${ATTACH_NAMES[$a]}"
+                AHASH="${ATTACH_HASHES[$a]}"
+                git update-index --add --cacheinfo 100644 "$AHASH" "$FILE_BASE/$ANAME/$AHASH"
+        done
 fi
 
 commit_index_and_update_branch "comment on $ID" "-p $GIT_CASE_HEAD"
