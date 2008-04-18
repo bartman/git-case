@@ -36,7 +36,7 @@ shortID=$(gen_short_case_id "$ID")
 
 FIELD_FILE="$ID/fields/$FIELD"
 
-count=$(git ls-tree cases "$FIELD_FILE" | wc -l)
+count=$(git ls-tree $GIT_CASE_HEAD "$FIELD_FILE" | wc -l)
 if test "$action" = "removed" -a "$count" -ne "1" ; then
         die "no field '$FIELD' set on case $shortID"
 fi
@@ -45,7 +45,7 @@ fi
 if test "$action" = "read" ; then
         test "$count" -ne "1" && die "no field '$FIELD' set on case $shortID"
 
-        exec git show "cases:$FIELD_FILE"
+        exec git show "$GIT_CASE_HEAD:$FIELD_FILE"
 fi
 
 # we work in the working dir

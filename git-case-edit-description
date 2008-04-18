@@ -16,7 +16,7 @@ go_to_git_case_work_dir
 
 DESC_FILE="$ID/description"
 TEMP_FILE=$(mktemp -p "$GIT_CASE_WORK_DIR")
-OLD=$(git show "cases:$DESC_FILE")
+OLD=$(git show "$GIT_CASE_HEAD:$DESC_FILE")
 
 cat <<END > "$TEMP_FILE"
 ${OLD}

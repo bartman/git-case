@@ -13,7 +13,7 @@ TYPE_FILE="$ID/type"
 
 VALUE="$1"
 if test -z "$VALUE" ; then
-        exec git show "cases:$TYPE_FILE"
+        exec git show "$GIT_CASE_HEAD:$TYPE_FILE"
 fi
 
 # we work in the working dir

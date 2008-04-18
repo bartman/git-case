@@ -24,7 +24,7 @@ case "${#@}" in
                 test -z "$ID" && die "no active case set"
                 ;;
         2)      ID="$1"
-                ID=$(git ls-tree cases | awk "/\<${ID}[a-fA-F0-9]*$/"'{ print $4 }')
+                ID=$(git ls-tree $GIT_CASE_HEAD | awk "/\<${ID}[a-fA-F0-9]*$/"'{ print $4 }')
                 shift
                 ;;
         *)      usage die
@@ -36,7 +36,7 @@ ASSIGNED_FILE="$ID/assigned"
 case "${#@}" in
         1)      WHO="$1"
                 ;;
-        *)      exec git show "cases:$ASSIGNED_FILE"
+        *)      exec git show "$GIT_CASE_HEAD:$ASSIGNED_FILE"
                 ;;
 esac
 

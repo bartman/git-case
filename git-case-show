@@ -12,10 +12,10 @@ if test -z "$ID" ; then
         ID=$(cat "$GIT_CASE_ACTIVE" 2>/dev/null || true)
         test -z "$ID" && die "no active case set"
 fi
-ID=$(git ls-tree cases | awk "/\<${ID}[a-fA-F0-9]*$/"'{ print $4 }')
+ID=$(git ls-tree $GIT_CASE_HEAD | awk "/\<${ID}[a-fA-F0-9]*$/"'{ print $4 }')
 shortID=$(gen_short_case_id "$ID")
 
-CASE_ROOT="cases:${ID}"
+CASE_ROOT="$GIT_CASE_HEAD:${ID}"
 
 desc=$(git show "$CASE_ROOT/description" 2>/dev/null || true)
 test -z "$desc" && die "active case is not valid"
@@ -45,14 +45,14 @@ echo    "State:       $state"
 echo -e "Assigned to: $mine$assig$reset"
 echo    "Found in:    $found"
 
-MARKS=$(git ls-tree cases "$ID/marks/" | awk -F/ '{ print $3 }' | xargs)
+MARKS=$(git ls-tree $GIT_CASE_HEAD "$ID/marks/" | awk -F/ '{ print $3 }' | xargs)
 test -n "$MARKS" && echo "Marks:       $MARKS"
 
-FIELDS=$(git ls-tree cases "$ID/fields/" | awk -F/ '{ print $3 }' | xargs)
+FIELDS=$(git ls-tree $GIT_CASE_HEAD "$ID/fields/" | awk -F/ '{ print $3 }' | xargs)
 if test -n "$FIELDS" ; then
         echo
         echo "Fields..."
-        git ls-tree cases -- "$ID/fields/" | while read mode type object file ; do
+        git ls-tree $GIT_CASE_HEAD -- "$ID/fields/" | while read mode type object file ; do
                 if test $type = blob ; then
                         short=${file##*/}:
                         printf "  * %-10s" $short
@@ -61,12 +61,12 @@ if test -n "$FIELDS" ; then
         done
 fi
 
-COMMENT_FILESS=$(git ls-tree cases -- "$ID/comments/")
+COMMENT_FILESS=$(git ls-tree $GIT_CASE_HEAD -- "$ID/comments/")
 test -z "$COMMENT_FILESS" && exit 0
 
 echo
 echo "Comments..."
-git ls-tree cases -- "$ID/comments/" | while read mode type object file ; do
+git ls-tree $GIT_CASE_HEAD -- "$ID/comments/" | while read mode type object file ; do
         if test $type = blob ; then
                 short=${file##*/}
                 echo "  * $short"

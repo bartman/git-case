@@ -13,7 +13,7 @@ STATE_FILE="$ID/state"
 
 VALUE="$1"
 if test -z "$VALUE" ; then
-        exec git show "cases:$STATE_FILE"
+        exec git show "$GIT_CASE_HEAD:$STATE_FILE"
 fi
 
 # we work in the working dir

@@ -24,7 +24,7 @@ shortID=$(gen_short_case_id "$ID")
 
 MARK_FILE="$ID/marks/$MARK"
 
-count=$(git ls-tree cases "$MARK_FILE" | wc -l)
+count=$(git ls-tree $GIT_CASE_HEAD "$MARK_FILE" | wc -l)
 if test "$action" = "set" -a "$count" -ne "0" ; then
         die "mark '$MARK' already set on case $shortID"
 fi

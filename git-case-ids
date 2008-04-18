@@ -31,7 +31,7 @@ IDS_PATH="$CASE_ID/ids"
 
 if test "$CMD" = '-l' ; then
         good=$(echo good | git hash-object -t blob --stdin)
-        git ls-tree cases -- "$IDS_PATH/" | while read mode type object file ; do
+        git ls-tree $GIT_CASE_HEAD -- "$IDS_PATH/" | while read mode type object file ; do
                 if test $type = blob ; then
                         short=$(gen_short_case_id $file)
                         if test "$object" = "$good" ; then
