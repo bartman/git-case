@@ -143,5 +143,15 @@ function gen_short_case_id() {
 	echo "${long:0:6}"
 }
 
+function print_pretty_comment() {
+        local file=$1
+        local object=$2
+
+        local short=${file##*/}
+        echo "  * $short"
+        git cat-file blob $object | sed 's/^/      /'
+        echo
+}
+
 
 # vim: set ft=sh ts=8 noet sw=8 tw=72

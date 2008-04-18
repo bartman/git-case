@@ -7,7 +7,7 @@
 
 source $(dirname $0)/git-case-common
 
-ID=$1
+ID=$1; shift
 if test -z "$ID" ; then
         ID=$(cat "$GIT_CASE_ACTIVE" 2>/dev/null || true)
         test -z "$ID" && die "no active case set"
@@ -16,6 +16,23 @@ ID=$(git ls-tree $GIT_CASE_HEAD | awk "/\<${ID}[a-fA-F0-9]*$/"'{ print $4 }')
 shortID=$(gen_short_case_id "$ID")
 
 CASE_ROOT="$GIT_CASE_HEAD:${ID}"
+
+while [ "${#@}" -gt 0 ]
+do
+        case "$1" in
+                --no-files)
+                        SUPPRESS_FILES=yes
+                        ;;
+                --no-comments)
+                        SUPPRESS_COMMENTS=yes
+                        ;;
+                *)
+                        echo "usage: $0 <caseid> [--no-comments] [--no-files]"
+                        die
+                        ;;
+        esac;
+        shift;
+done
 
 desc=$(git show "$CASE_ROOT/description" 2>/dev/null || true)
 test -z "$desc" && die "active case is not valid"
@@ -61,16 +78,16 @@ if test -n "$FIELDS" ; then
         done
 fi
 
-COMMENT_FILESS=$(git ls-tree $GIT_CASE_HEAD -- "$ID/comments/")
-test -z "$COMMENT_FILESS" && exit 0
+if [ "$SUPPRESS_COMMENTS" != "yes" ]
+then
+        COMMENT_FILESS=$(git ls-tree $GIT_CASE_HEAD -- "$ID/comments/")
+        test -z "$COMMENT_FILESS" && exit 0
 
-echo
-echo "Comments..."
-git ls-tree $GIT_CASE_HEAD -- "$ID/comments/" | while read mode type object file ; do
-        if test $type = blob ; then
-                short=${file##*/}
-                echo "  * $short"
-                git cat-file blob $object | sed 's/^/      /'
-                echo
-        fi
-done
+        echo
+        echo "Comments..."
+        git ls-tree $GIT_CASE_HEAD -- "$ID/comments/" | while read mode type object file ; do
+                if test $type = blob ; then
+                        print_pretty_comment "$file" "$object"
+                fi
+        done
+fi
