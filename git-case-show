@@ -7,7 +7,25 @@
 
 source $(dirname $0)/git-case-common
 
-ID=$1; shift
+SHOW_FILES=true
+SHOW_COMMENTS=true
+
+while test "${1:0:1}" = "-" ; do
+        case "$1" in
+                --no-files)
+                        SHOW_FILES=false
+                        ;;
+                --no-comments)
+                        SHOW_COMMENTS=false
+                        ;;
+                --*)
+                        die "usage: $0 [--no-comments] [--no-files] <caseid>"
+                        ;;
+        esac
+        shift
+done
+
+ID=$1
 if test -z "$ID" ; then
         ID=$(cat "$GIT_CASE_ACTIVE" 2>/dev/null || true)
         test -z "$ID" && die "no active case set"
@@ -17,22 +35,6 @@ shortID=$(gen_short_case_id "$ID")
 
 CASE_ROOT="$GIT_CASE_HEAD:${ID}"
 
-while [ "${#@}" -gt 0 ]
-do
-        case "$1" in
-                --no-files)
-                        SUPPRESS_FILES=yes
-                        ;;
-                --no-comments)
-                        SUPPRESS_COMMENTS=yes
-                        ;;
-                *)
-                        echo "usage: $0 <caseid> [--no-comments] [--no-files]"
-                        die
-                        ;;
-        esac;
-        shift;
-done
 
 desc=$(git show "$CASE_ROOT/description" 2>/dev/null || true)
 test -z "$desc" && die "active case is not valid"
@@ -78,8 +80,7 @@ if test -n "$FIELDS" ; then
         done
 fi
 
-if [ "$SUPPRESS_COMMENTS" != "yes" ]
-then
+if $SHOW_COMMENTS ; then
         COMMENT_FILESS=$(git ls-tree $GIT_CASE_HEAD -- "$ID/comments/")
         test -z "$COMMENT_FILESS" && exit 0
 
