@@ -86,11 +86,13 @@ if $SHOW_FILES ; then
         if test -n "$HAVE_FILES" ; then
                 echo
                 echo "Files..."
-                git-ls-tree -r $GIT_CASE_HEAD -- "$ID/files/" \
+                git ls-tree -r $GIT_CASE_HEAD -- "$ID/files/" \
                 | grep ' blob ' \
                 | while read mode type object file; do
-                        short=${file##*/}
-                        printf "  * %s\n" "$short"
+                        name_and_hash=${file#*/*/}
+                        name=${name_and_hash%%/*}
+                        sha1=${name_and_hash#*/}
+                        echo "  * $sha1  $name"
                 done
         fi
 fi
