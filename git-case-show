@@ -92,7 +92,7 @@ if $SHOW_FILES ; then
                         name_and_hash=${file#*/*/}
                         name=${name_and_hash%%/*}
                         sha1=${name_and_hash#*/}
-                        echo "  * $sha1  $name"
+                        echo -e "  * $bold$black""$sha1  $reset""$name"
                 done
         fi
 fi
