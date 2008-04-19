@@ -148,8 +148,16 @@ function print_pretty_comment() {
         local object=$2
 
         local short=${file##*/}
-        echo "  * $short"
-        git cat-file blob $object | sed 's/^/      /'
+        echo -e "  * $bold$black""$short""$reset"
+        git cat-file blob $object \
+	| ( while read line ; do
+	    test -z "$line" && break
+	    name=${line%%:*}
+	    value=${line##*: }
+	    echo -e "$bold$black""$name: $reset""$value"
+	    done
+	    echo ; cat ) \
+	| sed 's/^/      /'
         echo
 }
 
