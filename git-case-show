@@ -71,7 +71,8 @@ FIELDS=$(git ls-tree $GIT_CASE_HEAD "$ID/fields/" | awk -F/ '{ print $3 }' | xar
 if test -n "$FIELDS" ; then
         echo
         echo "Fields..."
-        git ls-tree $GIT_CASE_HEAD -- "$ID/fields/" | while read mode type object file ; do
+        git ls-tree $GIT_CASE_HEAD -- "$ID/fields/" \
+        | while read mode type object file ; do
                 if test $type = blob ; then
                         short=${file##*/}:
                         printf "  * %-10s" $short
@@ -80,15 +81,32 @@ if test -n "$FIELDS" ; then
         done
 fi
 
-if $SHOW_COMMENTS ; then
-        COMMENT_FILESS=$(git ls-tree $GIT_CASE_HEAD -- "$ID/comments/")
-        test -z "$COMMENT_FILESS" && exit 0
+if $SHOW_FILES ; then
+        HAVE_FILES=$(git ls-tree $GIT_CASE_HEAD -- "$ID/files")
+        if test -n "$HAVE_FILES" ; then
+                echo
+                echo "Files..."
+                git-ls-tree -r $GIT_CASE_HEAD -- "$ID/files/" \
+                | grep ' blob ' \
+                | while read mode type object file; do
+                        short=${file##*/}
+                        printf "  * %s\n" "$short"
+                done
+        fi
+fi
 
-        echo
-        echo "Comments..."
-        git ls-tree $GIT_CASE_HEAD -- "$ID/comments/" | while read mode type object file ; do
-                if test $type = blob ; then
+if $SHOW_COMMENTS ; then
+        HAVE_COMMENTS=$(git ls-tree $GIT_CASE_HEAD -- "$ID/comments")
+        if test -n "$HAVE_COMMENTS" ; then
+                echo
+                echo "Comments..."
+                git ls-tree $GIT_CASE_HEAD -- "$ID/comments/" \
+                | grep ' blob ' \
+                | while read mode type object file ; do
+                        if test "$header_done" != no ; then
+                                header_done=yes
+                        fi
                         print_pretty_comment "$file" "$object"
-                fi
-        done
+                done
+        fi
 fi
