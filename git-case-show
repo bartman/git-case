@@ -8,18 +8,19 @@
 source $(dirname $0)/git-case-common
 
 SHOW_FILES=true
+SHOW_IDS=false
 SHOW_COMMENTS=true
 
 while test "${1:0:1}" = "-" ; do
         case "$1" in
-                --no-files)
-                        SHOW_FILES=false
-                        ;;
-                --no-comments)
-                        SHOW_COMMENTS=false
-                        ;;
+                --files)        SHOW_FILES=true ;;
+                --no-files)     SHOW_FILES=false ;;
+                --ids)          SHOW_IDS=true ;;
+                --no-ids)       SHOW_IDS=false ;;
+                --comments)     SHOW_COMMENTS=true ;;
+                --no-comments)  SHOW_COMMENTS=false ;;
                 --*)
-                        die "usage: $0 [--no-comments] [--no-files] <caseid>"
+                        die "usage: $0 [--comments|--no-comments] [--ids|--no-ids] [--files|--no-files] <caseid>"
                         ;;
         esac
         shift
@@ -93,6 +94,24 @@ if $SHOW_FILES ; then
                         name=${name_and_hash%%/*}
                         sha1=${name_and_hash#*/}
                         echo -e "  * $bold$black""$sha1  $reset""$name"
+                done
+        fi
+fi
+
+if $SHOW_IDS ; then
+        HAVE_IDS=$(git ls-tree $GIT_CASE_HEAD -- "$ID/ids")
+        if test -n "$HAVE_IDS" ; then
+                good=$(echo good | git hash-object -t blob --stdin)
+                echo
+                echo "IDs..."
+                git ls-tree $GIT_CASE_HEAD -- "$ID/ids/" \
+                | grep ' blob ' \
+                | while read mode type object file ; do
+                        if test "$object" = "$good" ; then
+                                echo -e "  good $green$object$reset"
+                        else
+                                echo -e "  bad  $red$object$reset"
+                        fi
                 done
         fi
 fi
