@@ -20,7 +20,7 @@ while test "${1:0:1}" = "-" ; do
                 --comments)     SHOW_COMMENTS=true ;;
                 --no-comments)  SHOW_COMMENTS=false ;;
                 --*)
-                        die "usage: $0 [--comments|--no-comments] [--ids|--no-ids] [--files|--no-files] <caseid>"
+                        die "usage: $PROGRAM [--comments|--no-comments] [--ids|--no-ids] [--files|--no-files] <caseid>"
                         ;;
         esac
         shift

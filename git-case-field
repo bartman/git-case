@@ -7,10 +7,10 @@
 
 source $(dirname $0)/git-case-common
 
-test -z "$1" && die "$0 [-d] <field-name> [<value>]"
+test -z "$1" && die "$PROGRAM [-d] <field-name> [<value>]"
 
 if test "$1" = "-d" ; then
-        test "${#@}" = 2 || die "when deleting syntax is: $0 -d <field-name>"
+        test "${#@}" = 2 || die "when deleting syntax is: $PROGRAM -d <field-name>"
 
         action="removed"
         FIELD="$2"

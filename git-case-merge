@@ -10,6 +10,15 @@ source $(dirname $0)/git-case-common
 DEFAULT="origin/$GIT_CASE_HEAD"
 RBRANCH="${1:-$DEFAULT}"
 
+while test -n "$1" ; do
+        OPT="$1" ; shift
+        case "$OPT" in
+            -h|--help)
+                die "$PROGRAM [<remote>]"
+                ;;
+        esac
+done
+
 REMOTE_HEAD=$(git rev-parse --revs-only "${RBRANCH}")
 test -z "$REMOTE_HEAD" && "cannot determine sha1 of $RBRANCH"
 

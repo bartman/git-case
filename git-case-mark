@@ -7,7 +7,7 @@
 
 source $(dirname $0)/git-case-common
 
-test -z "$1" && die "$0 [-d] <mark-name>"
+test -z "$1" && die "$PROGRAM [-d] <mark-name>"
 
 action="set"
 if test "$1" = "-d" ; then

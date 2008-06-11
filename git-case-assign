@@ -9,7 +9,7 @@ source $(dirname $0)/git-case-common
 
 function usage() {
         OUT=$1
-        $OUT -e "Usage: $0 [ [<caseid>] <user> ]
+        $OUT -e "Usage: $PROGRAM [ [<caseid>] <user> ]
         User set to 'me' expands to you; sets to 'none' sets to no one."
         exit 0
 }

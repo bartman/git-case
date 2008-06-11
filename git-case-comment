@@ -8,7 +8,7 @@
 START_DIR=`pwd`
 source $(dirname $0)/git-case-common
 
-test -z "$1" -o "$1" = "-h" && die "$0 [-a|--attach <file>] [-c|--stdin]"
+test -z "$1" -o "$1" = "-h" && die "$PROGRAM [-a|--attach <file>] [-c|--stdin]"
 
 ID=$(cat "$GIT_CASE_ACTIVE" 2>/dev/null || true)
 test -z "$ID" && die "no active case set"
@@ -43,11 +43,11 @@ while test -n "$1" ; do
                 if test "${AFILE:0:1}" != '/' ; then
                         AFILE="$START_DIR/$AFILE"
                 fi
-                test -f "$AFILE" || die "$0: '$AFILE' is not a valid file"
+                test -f "$AFILE" || die "$PROGRAM: '$AFILE' is not a valid file"
                 ATTACH_FILES[${#ATTACH_FILES}]="$AFILE"
                 ;;
             *)
-                die "$0: unknown option, see -h"
+                die "$PROGRAM: unknown option, see -h"
                 ;;
         esac
 done

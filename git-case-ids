@@ -7,7 +7,7 @@
 
 source $(dirname $0)/git-case-common
 
-test -z "$1" && die "$0 [-l] [ [-g|-b|-d] [<commitish>|-] [<comment>] ]
+test -z "$1" && die "$PROGRAM [-l] [ [-g|-b|-d] [<commitish>|-] [<comment>] ]
     -l   list commits for active case
     -g   good commit
     -b   bad commit
