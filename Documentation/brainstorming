@@ -1,0 +1,167 @@
+# Git Bug/Case/Issue/Ticket Tracker
+
+## Repo
+
+  * public: git://tachyon.jukie.net/git-case.git
+  * via ssh: tachyon.jukie.net:/home/git/git-case.git
+
+  Please read the README.
+
+## Requirements
+
+  * interface
+    - git-svn like
+    - git case <cmd> <options>
+
+  * aidan and dave want email integration
+
+  * internal
+    - needs multiple bug databases (one per branch, public/private, etc)
+    - do as much as possible using native git features (wheel reinvention is bad)
+    - Comment storage should support "threading" of comments (maildir/mbox)
+    - needs to specify where the case is being worked on (sha1 git work-tree HEAD)
+    - needs to support custom "fields"
+
+  * repository layout
+    - One directory per case
+
+  * description file
+    - editable like any other metadata
+    - initially populated from first comment
+
+## Things to think about
+
+  * export and import
+    - need to be able to post cases from the db to a mailing list and get them back after
+
+        git case export <id>
+        git case import < file
+
+  * products and components
+    - some trackers split their database into multiple databases based on where the bug lives
+    - we could do it with custom fields, or we coudl handle it explicitly
+
+  * default owners
+    - some trackers have default owners (usually per product/component)
+    - when a case is created, it goes to the default owner
+    - some trackers go further and have a default asignee per state
+      + new bugs go to team lead person
+      + resolved bugs go to testing team
+      + reviewed bugs go to documentation guy
+      + closed bugs go to someone else
+    - this could be handled with custom fields and hooks, or could be explicit
+
+  * dependency
+    - bug A depends on B, thus B blocks A
+    - can be done with custom fields, or could be explicit
+
+  * severity and priority
+    - severity: does it break things?
+    - priority: how soon should it be fixed?
+    - this should probably be done with custom fields, different projects will have different names for priority and severity
+      + example: git case mark severe P1 blocker
+
+  * git-case hooks
+    - it would be nice if we could take hooks with us
+    - maybe we could store it in the cases tree...
+
+      git show cases:hooks/
+      hooks/
+      |-- state-new       # called on new cases
+      |-- state-resolved  # called on resolved cases
+      |-- state           # called on any other state
+      `-- ...
+
+    - these script could be used to implement a policy, but be completely configurable via git-config and by editing the scripts.
+    - the alternative is to put hooks in .git/hooks
+      + this sucks because they will not travel with us when we clone
+    - IMPORTANT: if we carry hooks around, we have to make sure that they cannot execute arbitrary code... otherwise someone could fetch bugs from another repo and be exploited
+      + bartman thinks that we need a small language for the hooks; and if you know bartman you know what language he is going to suggest.
+        # possible example: if changed(state, open|assigned|active, resolved) { assigned=qa@domain.com }
+
+## Repository layout
+
+        <id>/               # directory per case
+        |-- description     # 1st line title, then free form description
+        |-- type            # bug/feature/question/...
+        |-- found           # git commit worktree was in when case created RO
+        |-- state           # new/open/invalid/etc
+        |-- assigned        # name <email>
+        |-- marks/          # list of marks - tags in most tracker talk
+        |   `-- <name>      # empty file
+        |-- comments/       # comments, one per file
+        |   `-- <sha1>      # contains arbitrary text
+        |-- files/          # attachements to the case/comment
+        |   `-- <filename>/ # the name of the dir is actually the name of the file
+        |       `-- <sha1>  # hash of the file, contais the file
+        |-- ids/            # commits for which the state of thsi bug is known
+        |   `-- <sha1>      # file contains either 'good' or 'bad'
+        `-- fields/         # additional fields
+            `-- <name>      # contains one line of text
+
+  * NOTES
+    - 'version' was removed; no special handling; punting to field/
+    - attachments
+      + can be referenced by comments (in the text)
+      + same filename can be used from multiple attachments, but could actually be a different sha1
+      + file contents can be obtained with git plumbing, or by following files/<name>/<hash> because the <hash> is the same that is computed by git
+
+## Interface
+
+  * everything needs options
+  * everything needs colours (configurable)
+  * need options in git-config
+    - consider having optional banners
+      + git config case.banners [yes|no|auto]
+      + auto would show them only for terminal output (not into a pipe)
+    - nothing workes fully, but these are kinda working
+      + git-case-new [<description>]
+      + git-case-list [-m <mark>] [-c <field>=<text>] [...grep options...]
+      + git case active <id>
+      + git case comment [... email options...] [-a <file>] [-M <file>] [[-m] <comment message>]
+      + git case show [-v] [<id>]
+      + git case attach <file> [<comment message>]
+      + git case mark [-d] [<id>] <tag_name> ...
+      + git case field [-d] [<id>] <tag_name> [<value>]
+      + git case state [<id>] <state> <comment message>
+      + git case ids [l] [ [-g|-b|-d] [<commitish>|] [<comment>] ] # show/set/clear good/bad commits
+
+  * here are some other ideas
+    + git case grep [–[desc|comment|field|mark]=<text> ...] [<text>]
+
+  * thing to do
+    + input restrictions, marks and custom field names should be [a-zA-Z-9][a-zA-Z0-9._-]*
+
+## Cool things to try
+
+  * Integration with gitk
+    + graph showing cases and arrows to commits they reference
+
+  * Integration with git hooks
+    + commit hooks could check for "closes: <id>" etc
+
+  * Integration with git-web (cgit, etc)
+    + display and possibly edit cases through the web ui
+
+  * Integration with irc (bidirectional, bot)
+    + list, add, comment, modify cases from an irc channel
+
+  * Integration with git bisect
+    + knowing where the bug was found and presumably fixed, we could do some neat bisecting
+    + maybe find it on other branches, etc.
+
+  * Integration with BTS and other bug trackers that send out email
+    + automatically update local state
+    + the plan is to sell this to existing users (take lessons from git-svn)
+
+  * RSS feeds for cases, RSS feeds for new cases, RSS feeds for search criteria
+
+## Similar tools
+
+    * http://ditz.rubyforge.org/
+    * http://gitorious.org/projects/dtt
+    * http://github.com/schacon/ticgit/wikis
+    * http://www.ditrack.org/
+
+
+vim: set ts=8 et sw=8 tw=72 ft=mkd
