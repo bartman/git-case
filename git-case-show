@@ -31,7 +31,7 @@ if test -z "$ID" ; then
         ID=$(cat "$GIT_CASE_ACTIVE" 2>/dev/null || true)
         test -z "$ID" && die "no active case set"
 fi
-ID=$(git ls-tree $GIT_CASE_HEAD | awk "/\<${ID}[a-fA-F0-9]*$/"'{ print $4 }')
+ID=$(git ls-tree $GIT_CASE_HEAD | awk "/\t${ID}[a-fA-F0-9]*$/"'{ print $4 }')
 shortID=$(gen_short_case_id "$ID")
 
 CASE_ROOT="$GIT_CASE_HEAD:${ID}"

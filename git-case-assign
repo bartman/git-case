@@ -24,7 +24,7 @@ case "${#@}" in
                 test -z "$ID" && die "no active case set"
                 ;;
         2)      ID="$1"
-                ID=$(git ls-tree $GIT_CASE_HEAD | awk "/\<${ID}[a-fA-F0-9]*$/"'{ print $4 }')
+                ID=$(git ls-tree $GIT_CASE_HEAD | awk "/\t${ID}[a-fA-F0-9]*$/"'{ print $4 }')
                 shift
                 ;;
         *)      usage die
